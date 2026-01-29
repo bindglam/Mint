@@ -12,6 +12,7 @@ import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.executors.CommandExecutor
 import net.kyori.adventure.text.Component
 import org.bukkit.OfflinePlayer
+import java.math.BigDecimal
 
 object CommandManager : Managerial {
     override fun start() {
@@ -28,7 +29,7 @@ object CommandManager : Managerial {
                                 val target = args["target"] as OfflinePlayer
 
                                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                                    sender.sendMessage(Component.text(account.balance()))
+                                    sender.sendMessage(Component.text(account.balance().toString()))
                                     account.close()
                                 }
                             }),
@@ -39,8 +40,8 @@ object CommandManager : Managerial {
                                 val amount = args["amount"] as Double
 
                                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                                    account.balance(amount)
-                                    sender.sendMessage(Component.text(account.balance()))
+                                    account.balance(BigDecimal.valueOf(amount))
+                                    sender.sendMessage(Component.text(account.balance().toString()))
                                     account.close()
                                 }
                             }),
@@ -51,8 +52,8 @@ object CommandManager : Managerial {
                                 val amount = args["amount"] as Double
 
                                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                                    account.modifyBalance(amount, Operation.ADD)
-                                    sender.sendMessage(Component.text(account.balance()))
+                                    account.modifyBalance(BigDecimal.valueOf(amount), Operation.ADD)
+                                    sender.sendMessage(Component.text(account.balance().toString()))
                                     account.close()
                                 }
                             }),
@@ -63,8 +64,8 @@ object CommandManager : Managerial {
                                 val amount = args["amount"] as Double
 
                                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                                    account.modifyBalance(amount, Operation.SUBTRACT)
-                                    sender.sendMessage(Component.text(account.balance()))
+                                    account.modifyBalance(BigDecimal.valueOf(amount), Operation.SUBTRACT)
+                                    sender.sendMessage(Component.text(account.balance().toString()))
                                     account.close()
                                 }
                             })

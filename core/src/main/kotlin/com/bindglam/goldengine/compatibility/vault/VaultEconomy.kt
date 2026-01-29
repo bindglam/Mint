@@ -6,6 +6,7 @@ import com.bindglam.goldengine.manager.AccountManagerImpl
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
+import java.math.BigDecimal
 import java.text.DecimalFormat
 import kotlin.math.floor
 
@@ -34,7 +35,7 @@ object VaultEconomy : AbstractEconomy() {
         val player = Bukkit.getOfflinePlayer(playerName)
 
         AccountManagerImpl.getAccount(player.uniqueId).get().use { account ->
-            return account.balance()
+            return account.balance().toDouble()
         }
     }
 
@@ -48,10 +49,10 @@ object VaultEconomy : AbstractEconomy() {
         val player = Bukkit.getOfflinePlayer(playerName)
 
         AccountManagerImpl.getAccount(player.uniqueId).get().use { account ->
-            return if(account.modifyBalance(amount, Operation.SUBTRACT))
-                EconomyResponse(amount, account.balance(), EconomyResponse.ResponseType.SUCCESS, null)
+            return if(account.modifyBalance(BigDecimal.valueOf(amount), Operation.SUBTRACT))
+                EconomyResponse(amount, account.balance().toDouble(), EconomyResponse.ResponseType.SUCCESS, null)
             else
-                EconomyResponse(amount, account.balance(), EconomyResponse.ResponseType.FAILURE, null)
+                EconomyResponse(amount, account.balance().toDouble(), EconomyResponse.ResponseType.FAILURE, null)
         }
     }
 
@@ -61,10 +62,10 @@ object VaultEconomy : AbstractEconomy() {
         val player = Bukkit.getOfflinePlayer(playerName)
 
         AccountManagerImpl.getAccount(player.uniqueId).get().use { account ->
-            return if(account.modifyBalance(amount, Operation.ADD))
-                EconomyResponse(amount, account.balance(), EconomyResponse.ResponseType.SUCCESS, null)
+            return if(account.modifyBalance(BigDecimal.valueOf(amount), Operation.ADD))
+                EconomyResponse(amount, account.balance().toDouble(), EconomyResponse.ResponseType.SUCCESS, null)
             else
-                EconomyResponse(amount, account.balance(), EconomyResponse.ResponseType.FAILURE, null)
+                EconomyResponse(amount, account.balance().toDouble(), EconomyResponse.ResponseType.FAILURE, null)
         }
     }
 

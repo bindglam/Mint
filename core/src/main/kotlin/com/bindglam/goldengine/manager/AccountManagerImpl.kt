@@ -17,7 +17,7 @@ object AccountManagerImpl : AccountManager {
         GoldEngine.instance().database().getConnection { connection ->
             connection.createStatement().use { statement ->
                 statement.execute("CREATE TABLE IF NOT EXISTS ${AccountManager.ACCOUNTS_TABLE_NAME}" +
-                        "(holder VARCHAR(36) PRIMARY KEY, balance DOUBLE)")
+                        "(holder VARCHAR(36) PRIMARY KEY, balance DECIMAL)")
             }
         }
 
