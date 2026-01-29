@@ -1,6 +1,7 @@
 package com.bindglam.goldengine.database;
 
 import com.bindglam.goldengine.GoldEngine;
+import com.bindglam.goldengine.GoldEngineConfiguration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -13,11 +14,11 @@ import java.sql.SQLException;
 public class SQLiteDatabase implements Database {
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteDatabase.class);
 
-    private final ConfigurationSection config;
+    private final GoldEngineConfiguration config;
 
     private @Nullable Connection connection;
 
-    public SQLiteDatabase(ConfigurationSection config) {
+    public SQLiteDatabase(GoldEngineConfiguration config) {
         this.config = config;
     }
 

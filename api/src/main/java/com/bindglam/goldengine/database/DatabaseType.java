@@ -1,5 +1,6 @@
 package com.bindglam.goldengine.database;
 
+import com.bindglam.goldengine.GoldEngineConfiguration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,13 +10,13 @@ public enum DatabaseType {
     SQLITE(SQLiteDatabase::new),
     MYSQL(SQLiteDatabase::new);
 
-    private final Function<ConfigurationSection, Database> supplier;
+    private final Function<GoldEngineConfiguration, Database> supplier;
 
-    DatabaseType(Function<ConfigurationSection, Database> supplier) {
+    DatabaseType(Function<GoldEngineConfiguration, Database> supplier) {
         this.supplier = supplier;
     }
 
-    public @NotNull Database create(ConfigurationSection config) {
-        return supplier.apply(config.getConfigurationSection(this.name()));
+    public @NotNull Database create(GoldEngineConfiguration config) {
+        return supplier.apply(config);
     }
 }

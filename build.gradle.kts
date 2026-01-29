@@ -17,6 +17,7 @@ tasks {
         version(mcVersionString)
 
         downloadPlugins {
+            modrinth("vaultunlocked", "2.18.0")
         }
     }
 
@@ -35,5 +36,7 @@ tasks {
             relocate(pattern, "$groupString.shaded.$pattern")
         }
         prefix("kotlin")
+        prefix("dev.jorel.commandapi")
+        prefix("com.bindglam.config")
     }
 }

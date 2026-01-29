@@ -1,4 +1,3 @@
-import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 
 plugins {
@@ -9,6 +8,9 @@ plugins {
 dependencies {
     implementation(project(":api"))
     implementation("dev.jorel:commandapi-bukkit-shade:10.1.2")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+        exclude("org.bukkit")
+    }
 }
 
 paperPluginYaml {
@@ -18,6 +20,7 @@ paperPluginYaml {
     apiVersion = "1.20"
     author = "Bindglam"
     dependencies {
+        server(name = "Vault", load = PaperPluginYaml.Load.BEFORE, required = false, joinClasspath = true)
         server(name = "PlaceholderAPI", load = PaperPluginYaml.Load.BEFORE, required = false, joinClasspath = true)
     }
 }
