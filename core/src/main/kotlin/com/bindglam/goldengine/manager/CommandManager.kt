@@ -22,12 +22,12 @@ object CommandManager : Managerial {
     override fun start() {
         CommandAPI.onLoad(CommandAPIBukkitConfig(GoldEngine.instance().plugin()))
 
-        CommandAPICommand("goldengine")
-            .withPermission(CommandPermission.OP)
+        CommandAPICommand("money")
             .withAliases("돈")
             .withSubcommands(
                 CommandAPICommand("balance")
                     .withAliases("잔액")
+                    .withPermission(CommandPermission.OP)
                     .withSubcommands(
                         CommandAPICommand("get")
                             .withAliases("확인")
