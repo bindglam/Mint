@@ -9,7 +9,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SQLiteDatabase implements Database {
+public final class SQLiteDatabase implements Database {
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteDatabase.class);
 
     private final GoldEngineConfiguration config;

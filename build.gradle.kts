@@ -18,6 +18,8 @@ tasks {
 
         downloadPlugins {
             modrinth("vaultunlocked", "2.18.0")
+            github("SkriptLang", "Skript", "2.12.2", "Skript-2.12.2.jar")
+            github("SkriptLang", "skript-reflect", "v2.6.1", "skript-reflect-2.6.1.jar")
         }
     }
 
