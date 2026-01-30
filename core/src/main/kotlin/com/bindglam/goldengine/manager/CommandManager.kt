@@ -11,10 +11,14 @@ import dev.jorel.commandapi.arguments.DoubleArgument
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.executors.CommandExecutor
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
+import java.text.DecimalFormat
 
 object CommandManager : Managerial {
+    private val decimalFormat = DecimalFormat("###,###")
+
     override fun start() {
         CommandAPI.onLoad(CommandAPIBukkitConfig(GoldEngine.instance().plugin()))
 
@@ -29,7 +33,8 @@ object CommandManager : Managerial {
                                 val target = args["target"] as OfflinePlayer
 
                                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                                    sender.sendMessage(Component.text(account.balance().toString()))
+                                    sender.sendMessage(Component.text("Current balance : ${decimalFormat.format(account.balance())}${GoldEngine.instance().config().economy.currencyName.value()}")
+                                        .color(NamedTextColor.YELLOW))
                                     account.close()
                                 }
                             }),
@@ -41,7 +46,8 @@ object CommandManager : Managerial {
 
                                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
                                     account.balance(BigDecimal.valueOf(amount))
-                                    sender.sendMessage(Component.text(account.balance().toString()))
+                                    sender.sendMessage(Component.text("Current balance : ${decimalFormat.format(account.balance())}${GoldEngine.instance().config().economy.currencyName.value()}")
+                                        .color(NamedTextColor.YELLOW))
                                     account.close()
                                 }
                             }),
@@ -53,7 +59,8 @@ object CommandManager : Managerial {
 
                                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
                                     account.modifyBalance(BigDecimal.valueOf(amount), Operation.ADD)
-                                    sender.sendMessage(Component.text(account.balance().toString()))
+                                    sender.sendMessage(Component.text("Current balance : ${decimalFormat.format(account.balance())}${GoldEngine.instance().config().economy.currencyName.value()}")
+                                        .color(NamedTextColor.YELLOW))
                                     account.close()
                                 }
                             }),
@@ -65,7 +72,8 @@ object CommandManager : Managerial {
 
                                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
                                     account.modifyBalance(BigDecimal.valueOf(amount), Operation.SUBTRACT)
-                                    sender.sendMessage(Component.text(account.balance().toString()))
+                                    sender.sendMessage(Component.text("Current balance : ${decimalFormat.format(account.balance())}${GoldEngine.instance().config().economy.currencyName.value()}")
+                                        .color(NamedTextColor.YELLOW))
                                     account.close()
                                 }
                             })
