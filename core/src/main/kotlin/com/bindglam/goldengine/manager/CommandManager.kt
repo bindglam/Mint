@@ -10,6 +10,7 @@ import dev.jorel.commandapi.CommandPermission
 import dev.jorel.commandapi.arguments.DoubleArgument
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.executors.CommandExecutor
+import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.OfflinePlayer
@@ -85,6 +86,13 @@ object CommandManager : Managerial {
                             })
                     )
             )
+            .executesPlayer(PlayerCommandExecutor { player, _ ->
+                AccountManagerImpl.getAccount(player.uniqueId).thenAccept { account ->
+                    player.sendMessage(Component.text("Current balance : ${decimalFormat.format(account.balance())}${GoldEngine.instance().config().economy.currencyName.value()}")
+                        .color(NamedTextColor.YELLOW))
+                    account.close()
+                }
+            })
             .register()
 
         CommandAPI.onEnable()
