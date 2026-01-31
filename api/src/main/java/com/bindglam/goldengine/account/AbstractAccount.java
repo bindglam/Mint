@@ -1,5 +1,7 @@
 package com.bindglam.goldengine.account;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.bindglam.goldengine.GoldEngine;
 import com.bindglam.goldengine.currency.Currency;
 import com.bindglam.goldengine.manager.AccountManager;
@@ -10,7 +12,6 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -33,8 +34,9 @@ public abstract class AbstractAccount implements Account {
 
                 ResultSet result = statement.executeQuery();
                 if(result.next()) {
+                    JSONObject json = JSON.parseObject(result.getString("balance"));
                     for (Currency currency : GoldEngine.instance().currencyManager().registry().entries()) {
-                        this.balance.put(currency.id(), result.getBigDecimal(currency.id()));
+                        this.balance.put(currency.id(), json.getBigDecimal(currency.id()));
                     }
 
                     this.isJustCreated = false;
@@ -51,38 +53,28 @@ public abstract class AbstractAccount implements Account {
 
     @ApiStatus.Internal
     public void save() {
-        List<Currency> currencies = GoldEngine.instance().currencyManager().registry().entries().stream().toList();
-
         GoldEngine.instance().database().getConnection((connection) -> {
             if (this.isJustCreated) {
-                StringBuilder balanceNames = new StringBuilder();
-                for (int i = 0; i < currencies.size(); i++) {
-                    balanceNames.append(currencies.get(i).id());
-                    if(i < currencies.size()-1)
-                        balanceNames.append(", ");
-                }
-
-                try (PreparedStatement statement = connection.prepareStatement("INSERT INTO " + AccountManager.ACCOUNTS_TABLE_NAME + " (holder, " + balanceNames + ") VALUES (?, ?)")) {
+                try (PreparedStatement statement = connection.prepareStatement("INSERT INTO " + AccountManager.ACCOUNTS_TABLE_NAME + " (holder, balance) VALUES (?, ?)")) {
                     statement.setString(1, this.holder.toString());
-                    for (int i = 0; i < currencies.size(); i++) {
-                        statement.setBigDecimal(2 + i, this.balance(currencies.get(i)));
-                    }
+
+                    JSONObject json = new JSONObject();
+                    GoldEngine.instance().currencyManager().registry().entries().forEach(currency -> {
+                        json.put(currency.id(), this.balance(currency));
+                    });
+                    statement.setString(2, json.toString());
 
                     statement.executeUpdate();
                 }
             } else {
-                StringBuilder balanceFields = new StringBuilder();
-                for (int i = 0; i < currencies.size(); i++) {
-                    balanceFields.append(currencies.get(i).id()).append(" = ?");
-                    if(i < currencies.size()-1)
-                        balanceFields.append(", ");
-                }
+                try (PreparedStatement statement = connection.prepareStatement("UPDATE " + AccountManager.ACCOUNTS_TABLE_NAME + " SET balance = ? WHERE holder = ?")) {
+                    JSONObject json = new JSONObject();
+                    GoldEngine.instance().currencyManager().registry().entries().forEach(currency -> {
+                        json.put(currency.id(), this.balance(currency));
+                    });
+                    statement.setString(1, json.toString());
 
-                try (PreparedStatement statement = connection.prepareStatement("UPDATE " + AccountManager.ACCOUNTS_TABLE_NAME + " SET " + balanceFields + " WHERE holder = ?")) {
-                    for (int i = 0; i < currencies.size(); i++) {
-                        statement.setBigDecimal(1 + i, this.balance(currencies.get(i)));
-                    }
-                    statement.setString(currencies.size() + 1, this.holder.toString());
+                    statement.setString(2, this.holder.toString());
 
                     statement.executeUpdate();
                 }

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.*;
 
 public final class CurrencyRegistry {
-    private final Map<String, Currency> map = new LinkedHashMap<>();
+    private final Map<String, Currency> map = new HashMap<>();
 
     public void register(Currency currency) {
         if(map.containsKey(currency.id()))
