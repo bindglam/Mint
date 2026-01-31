@@ -23,9 +23,9 @@ object VaultEconomy : AbstractEconomy() {
 
     override fun format(amount: Double): String = decimalFormat.format(floor(amount))
 
-    override fun currencyNamePlural(): String = GoldEngine.instance().config().economy.currencyName.value()
+    override fun currencyNamePlural(): String = ""
 
-    override fun currencyNameSingular(): String = GoldEngine.instance().config().economy.currencyName.value()
+    override fun currencyNameSingular(): String = ""
 
     override fun hasAccount(playerName: String): Boolean = true
 

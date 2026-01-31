@@ -21,11 +21,6 @@ public final class GoldEngineConfiguration extends Configuration {
         }
     }
 
-    public final Economy economy = new Economy();
-    public final class Economy {
-        public final Field<String> currencyName = createPrimitiveField("economy.currency-name", "원");
-    }
-
     public final Features features = new Features();
     public final class Features {
         public final Boast boast = new Boast();

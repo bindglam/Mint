@@ -1,6 +1,7 @@
 error_insufficient_money: "<red>잔액이 부족합니다."
 error_insufficient_money_with_cost: "<red>잔액이 부족합니다. ( 필요 금액: %s )"
 error_inavailable_feature: "<red>이 기능은 현재 사용할 수 없습니다."
+error_invalid_currency: "<red>알 수 없는 통화입니다."
 command_money: "<yellow>현재 잔액: %s"
 command_money_balance_get: "<yellow>%s님의 현재 잔액: %s"
 command_money_send_sender: "<green>성공적으로 %s님께 돈을 송금하였습니다. ( 잔액: %s )"
