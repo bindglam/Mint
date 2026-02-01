@@ -7,7 +7,8 @@ plugins {
 
 dependencies {
     implementation(project(":api"))
-    implementation("dev.jorel:commandapi-bukkit-shade:10.1.2")
+    implementation("org.incendo:cloud-paper:2.0.0-beta.14")
+    //implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.14")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit")
     }

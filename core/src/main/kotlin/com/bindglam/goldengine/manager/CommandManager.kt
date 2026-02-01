@@ -4,115 +4,116 @@ import com.bindglam.goldengine.GoldEngine
 import com.bindglam.goldengine.account.Operation
 import com.bindglam.goldengine.utils.lang
 import com.bindglam.goldengine.utils.plugin
-import dev.jorel.commandapi.CommandAPI
-import dev.jorel.commandapi.CommandAPIBukkitConfig
-import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.CommandPermission
-import dev.jorel.commandapi.arguments.ArgumentSuggestions
-import dev.jorel.commandapi.arguments.DoubleArgument
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument
-import dev.jorel.commandapi.arguments.TextArgument
-import dev.jorel.commandapi.executors.CommandExecutor
-import dev.jorel.commandapi.executors.PlayerCommandExecutor
-import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
+import org.incendo.cloud.SenderMapper
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities
+import org.incendo.cloud.execution.ExecutionCoordinator
+import org.incendo.cloud.paper.LegacyPaperCommandManager
+import org.incendo.cloud.parser.standard.DoubleParser
+import org.incendo.cloud.parser.standard.StringParser
 import java.math.BigDecimal
 
 object CommandManager : Managerial {
     override fun start(context: Context) {
-        CommandAPI.onLoad(CommandAPIBukkitConfig(context.plugin().plugin()))
+        val manager = LegacyPaperCommandManager(
+            context.plugin().plugin(),
+            ExecutionCoordinator.simpleCoordinator(),
+            SenderMapper.identity()
+        )
 
-        CommandAPICommand("goldengine")
-            .withPermission(CommandPermission.OP)
-            .withSubcommands(
-                CommandAPICommand("reload")
-                    .executes(CommandExecutor { sender, _ ->
-                        sender.sendMessage(lang("command_reload_start"))
+        if (manager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
+            manager.registerBrigadier()
+        } else if (manager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+            manager.registerAsynchronousCompletions()
+        }
 
-                        GoldEngine.instance().reload()
+        manager.command(manager.commandBuilder("goldengine")
+            .literal("reload")
+            .handler { ctx ->
+                ctx.sender().sendMessage(lang("command_reload_start"))
+                GoldEngine.instance().reload()
+                ctx.sender().sendMessage(lang("command_reload_end"))
+            })
+        manager.command(manager.commandBuilder("goldengine")
+            .literal("balance")
+            .literal("get")
+            .required("target", StringParser.stringParser())
+            .required("currency", StringParser.stringParser())
+            .handler { ctx ->
+                val target = Bukkit.getOfflinePlayer(ctx.get<String>("target"))
+                val currency = GoldEngine.instance().currencyManager().registry().get(ctx.get("currency")).orElse(null)
+                if(currency == null) {
+                    ctx.sender().sendMessage(lang("error_invalid_currency"))
+                    return@handler
+                }
 
-                        sender.sendMessage(lang("command_reload_end"))
-                    }),
-                CommandAPICommand("balance")
-                    .withSubcommands(
-                        CommandAPICommand("get")
-                            .withArguments(OfflinePlayerArgument("target"), TextArgument("currency").replaceSuggestions(ArgumentSuggestions.strings { GoldEngine.instance().currencyManager().registry().entries().map { it.id() }.toTypedArray() }))
-                            .executes(CommandExecutor { sender, args ->
-                                val target = args["target"] as OfflinePlayer
-                                val currency = GoldEngine.instance().currencyManager().registry().get(args["currency"] as String).orElse(null)
-                                if(currency == null) {
-                                    sender.sendMessage(lang("error_invalid_currency"))
-                                    return@CommandExecutor
-                                }
+                AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
+                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
+                    account.close()
+                }
+            })
+        manager.command(manager.commandBuilder("goldengine")
+            .literal("balance")
+            .literal("set")
+            .required("target", StringParser.stringParser())
+            .required("currency", StringParser.stringParser())
+            .required("amount", DoubleParser.doubleParser(0.0))
+            .handler { ctx ->
+                val target = Bukkit.getOfflinePlayer(ctx.get<String>("target"))
+                val currency = GoldEngine.instance().currencyManager().registry().get(ctx.get("currency")).orElse(null)
+                val amount = ctx.get<Double>("amount")
+                if(currency == null) {
+                    ctx.sender().sendMessage(lang("error_invalid_currency"))
+                    return@handler
+                }
 
-                                AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                                    sender.sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
-                                    account.close()
-                                }
-                            }),
-                        CommandAPICommand("set")
-                            .withArguments(OfflinePlayerArgument("target"), TextArgument("currency").replaceSuggestions(ArgumentSuggestions.strings { GoldEngine.instance().currencyManager().registry().entries().map { it.id() }.toTypedArray() }),
-                                DoubleArgument("amount"))
-                            .executes(CommandExecutor { sender, args ->
-                                val target = args["target"] as OfflinePlayer
-                                val currency = GoldEngine.instance().currencyManager().registry().get(args["currency"] as String).orElse(null)
-                                val amount = args["amount"] as Double
-                                if(currency == null) {
-                                    sender.sendMessage(lang("error_invalid_currency"))
-                                    return@CommandExecutor
-                                }
+                AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
+                    account.balance(currency, BigDecimal.valueOf(amount))
+                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
+                    account.close()
+                }
+            })
+        manager.command(manager.commandBuilder("goldengine")
+            .literal("balance")
+            .literal("add")
+            .required("target", StringParser.stringParser())
+            .required("currency", StringParser.stringParser())
+            .required("amount", DoubleParser.doubleParser(0.0))
+            .handler { ctx ->
+                val target = Bukkit.getOfflinePlayer(ctx.get<String>("target"))
+                val currency = GoldEngine.instance().currencyManager().registry().get(ctx.get("currency")).orElse(null)
+                val amount = ctx.get<Double>("amount")
+                if(currency == null) {
+                    ctx.sender().sendMessage(lang("error_invalid_currency"))
+                    return@handler
+                }
 
-                                AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                                    account.balance(currency, BigDecimal.valueOf(amount))
-                                    sender.sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
-                                    account.close()
-                                }
-                            }),
-                        CommandAPICommand("add")
-                            .withArguments(OfflinePlayerArgument("target"), TextArgument("currency").replaceSuggestions(ArgumentSuggestions.strings { GoldEngine.instance().currencyManager().registry().entries().map { it.id() }.toTypedArray() }),
-                                DoubleArgument("amount"))
-                            .executes(CommandExecutor { sender, args ->
-                                val target = args["target"] as OfflinePlayer
-                                val currency = GoldEngine.instance().currencyManager().registry().get(args["currency"] as String).orElse(null)
-                                val amount = args["amount"] as Double
-                                if(currency == null) {
-                                    sender.sendMessage(lang("error_invalid_currency"))
-                                    return@CommandExecutor
-                                }
+                AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
+                    account.modifyBalance(currency, BigDecimal.valueOf(amount), Operation.ADD)
+                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
+                    account.close()
+                }
+            })
+        manager.command(manager.commandBuilder("goldengine")
+            .literal("balance")
+            .literal("subtract")
+            .required("target", StringParser.stringParser())
+            .required("currency", StringParser.stringParser())
+            .required("amount", DoubleParser.doubleParser(0.0))
+            .handler { ctx ->
+                val target = Bukkit.getOfflinePlayer(ctx.get<String>("target"))
+                val currency = GoldEngine.instance().currencyManager().registry().get(ctx.get("currency")).orElse(null)
+                val amount = ctx.get<Double>("amount")
+                if(currency == null) {
+                    ctx.sender().sendMessage(lang("error_invalid_currency"))
+                    return@handler
+                }
 
-                                AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                                    account.modifyBalance(currency, BigDecimal.valueOf(amount), Operation.ADD)
-                                    sender.sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
-                                    account.close()
-                                }
-                            }),
-                        CommandAPICommand("subtract")
-                            .withArguments(OfflinePlayerArgument("target"), TextArgument("currency").replaceSuggestions(ArgumentSuggestions.strings { GoldEngine.instance().currencyManager().registry().entries().map { it.id() }.toTypedArray() }),
-                                DoubleArgument("amount"))
-                            .executes(CommandExecutor { sender, args ->
-                                val target = args["target"] as OfflinePlayer
-                                val currency = GoldEngine.instance().currencyManager().registry().get(args["currency"] as String).orElse(null)
-                                val amount = args["amount"] as Double
-                                if(currency == null) {
-                                    sender.sendMessage(lang("error_invalid_currency"))
-                                    return@CommandExecutor
-                                }
-
-                                AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                                    account.modifyBalance(currency, BigDecimal.valueOf(amount), Operation.SUBTRACT)
-                                    sender.sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
-                                    account.close()
-                                }
-                            })
-                    )
-            )
-            .register()
-
-        CommandAPI.onEnable()
-    }
-
-    override fun end(context: Context) {
-        CommandAPI.onDisable()
+                AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
+                    account.modifyBalance(currency, BigDecimal.valueOf(amount), Operation.SUBTRACT)
+                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
+                    account.close()
+                }
+            })
     }
 }
