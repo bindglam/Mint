@@ -14,6 +14,7 @@ import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.arguments.TextArgument
 import dev.jorel.commandapi.executors.CommandExecutor
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
@@ -25,6 +26,14 @@ object CommandManager : Managerial {
         CommandAPICommand("goldengine")
             .withPermission(CommandPermission.OP)
             .withSubcommands(
+                CommandAPICommand("reload")
+                    .executes(CommandExecutor { sender, _ ->
+                        sender.sendMessage(lang("command_reload_start"))
+
+                        GoldEngine.instance().reload()
+
+                        sender.sendMessage(lang("command_reload_end"))
+                    }),
                 CommandAPICommand("balance")
                     .withSubcommands(
                         CommandAPICommand("get")

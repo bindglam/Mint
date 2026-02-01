@@ -1,2 +1,4 @@
 error_invalid_currency: "<red>알 수 없는 통화입니다."
+command_reload_start: "<yellow>리로드중..."
+command_reload_end: "<green>리로드 완료!"
 command_money_balance_get: "<yellow>%s님의 현재 잔액: %s"

@@ -47,5 +47,14 @@ object CurrencyManagerImpl : CurrencyManager {
         context.logger().info("Loaded $cnt currencies")
     }
 
+    override fun end(context: Context) {
+        registry.clear()
+    }
+
+    override fun reload(context: Context) {
+        end(context)
+        start(context)
+    }
+
     override fun registry() = registry
 }

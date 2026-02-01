@@ -5,7 +5,7 @@ import com.bindglam.goldengine.language.Language
 import com.bindglam.goldengine.utils.plugin
 import java.io.File
 
-object LanguageManager : Managerial {
+object LanguageManager : Managerial, Reloadable {
     private val builtInLanguages = listOf("korean")
     private val langsFolder = File("plugins/GoldEngine/langs")
 
@@ -31,6 +31,15 @@ object LanguageManager : Managerial {
             val lang = Language(file.nameWithoutExtension).also { it.load(file) }
             langs[lang.name] = lang
         }
+    }
+
+    override fun end(context: Context) {
+        langs.clear()
+    }
+
+    override fun reload(context: Context) {
+        end(context)
+        start(context)
     }
 
     fun lang() = langs[this.config.language.value()]!!

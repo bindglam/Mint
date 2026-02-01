@@ -8,6 +8,7 @@ import com.bindglam.goldengine.manager.CompatibilityManager
 import com.bindglam.goldengine.manager.ContextImpl
 import com.bindglam.goldengine.manager.CurrencyManagerImpl
 import com.bindglam.goldengine.manager.LanguageManager
+import com.bindglam.goldengine.manager.Reloadable
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
@@ -48,6 +49,14 @@ class GoldEnginePluginImpl : JavaPlugin(), GoldEnginePlugin {
         this.managers.forEach { it.end(ContextImpl(this)) }
 
         this.database.stop()
+    }
+
+    override fun reload() {
+        this.logger.info("Reloading...")
+
+        this.managers.filterIsInstance<Reloadable>().forEach { it.reload(ContextImpl(this)) }
+
+        this.logger.info("Successfully reloaded!")
     }
 
     override fun config() = this.config
