@@ -6,6 +6,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
+/**
+ * Database type enum
+ *
+ * @author bindglam
+ */
 public enum DatabaseType {
     SQLITE(SQLiteDatabase::new),
     MYSQL(MySQLDatabase::new);

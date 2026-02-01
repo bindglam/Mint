@@ -9,6 +9,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * An implementation of Database interface for SQLite
+ *
+ * @author bindglam
+ */
 public final class SQLiteDatabase implements Database {
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteDatabase.class);
 

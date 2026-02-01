@@ -2,6 +2,11 @@ package com.bindglam.goldengine.account;
 
 import java.util.UUID;
 
+/**
+ * An implementation of AbstractAccount class for online accounts
+ *
+ * @author bindglam
+ */
 public class OnlineAccount extends AbstractAccount {
     public OnlineAccount(UUID holder) {
         super(holder);

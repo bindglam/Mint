@@ -3,6 +3,11 @@ package com.bindglam.goldengine;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * GoldEnginePlugin interface provider
+ *
+ * @author bindglam
+ */
 public final class GoldEngine {
     private static GoldEnginePlugin instance;
 

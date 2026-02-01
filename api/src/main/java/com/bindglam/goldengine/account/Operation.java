@@ -3,6 +3,11 @@ package com.bindglam.goldengine.account;
 import java.math.BigDecimal;
 import java.util.function.BiFunction;
 
+/**
+ * Operation enum
+ *
+ * @author bindglam
+ */
 public enum Operation {
     ADD((a, b) -> Result.success(a.add(b))),
     SUBTRACT((a, b) -> {

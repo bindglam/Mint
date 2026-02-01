@@ -3,6 +3,11 @@ package com.bindglam.goldengine.currency;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
+/**
+ * Currency definition class
+ *
+ * @author bindglam
+ */
 public record Currency(String id, CurrencyDisplay display) {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###,###.#");
 

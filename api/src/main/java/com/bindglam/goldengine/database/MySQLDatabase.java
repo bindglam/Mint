@@ -7,6 +7,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * An implementation of Database interface for MySQL
+ *
+ * @author bindglam
+ */
 public final class MySQLDatabase implements Database {
     private HikariDataSource dataSource;
 

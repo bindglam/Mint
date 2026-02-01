@@ -6,6 +6,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Logger;
 
+/**
+ * Context interface for managers
+ *
+ * @author bindglam
+ */
 public interface Context {
     @NotNull GoldEnginePlugin plugin();
 

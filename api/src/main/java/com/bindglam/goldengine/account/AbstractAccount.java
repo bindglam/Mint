@@ -15,6 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * An abstract implementation of Account interface
+ *
+ * @author bindglam
+ */
 public abstract class AbstractAccount implements Account {
     private final UUID holder;
 
