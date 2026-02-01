@@ -13,6 +13,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit")
     }
+    compileOnly("org.semver4j:semver4j:6.0.0")
 }
 
 paperPluginYaml {

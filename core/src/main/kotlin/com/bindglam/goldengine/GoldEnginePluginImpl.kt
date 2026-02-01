@@ -9,6 +9,8 @@ import com.bindglam.goldengine.manager.ContextImpl
 import com.bindglam.goldengine.manager.CurrencyManagerImpl
 import com.bindglam.goldengine.manager.LanguageManager
 import com.bindglam.goldengine.manager.Reloadable
+import com.bindglam.goldengine.utils.UpdateChecker
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
@@ -43,6 +45,18 @@ class GoldEnginePluginImpl : JavaPlugin(), GoldEnginePlugin {
         this.database.start()
 
         this.managers.forEach { it.start(ContextImpl(this)) }
+
+        fun checkUpdate() {
+            val checker = UpdateChecker("bindglam", "GoldEngine")
+
+            if(checker.check(this.pluginMeta.version)) {
+                logger.info("A new version of GoldEngine is available!")
+                logger.info("https://github.com/bindglam/GoldEngine/releases")
+            } else {
+                logger.info("You are using the latest version of GoldEngine!")
+            }
+        }
+        Bukkit.getAsyncScheduler().runNow(this) { _ -> checkUpdate() }
     }
 
     override fun onDisable() {

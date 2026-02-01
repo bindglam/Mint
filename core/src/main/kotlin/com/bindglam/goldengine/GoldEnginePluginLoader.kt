@@ -23,6 +23,7 @@ class GoldEnginePluginLoader : PluginLoader {
         resolver.addDependency(Dependency(DefaultArtifact("com.alibaba.fastjson2:fastjson2:2.0.60"), null))
         resolver.addDependency(Dependency(DefaultArtifact("com.zaxxer:HikariCP:4.0.3"), null))
         resolver.addDependency(Dependency(DefaultArtifact("org.incendo:cloud-paper:2.0.0-beta.14"), null))
+        resolver.addDependency(Dependency(DefaultArtifact("org.semver4j:semver4j:6.0.0"), null))
 
         return resolver
     }
