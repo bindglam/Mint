@@ -2,13 +2,12 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/bindglam/goldengine/badge)](https://www.codefactor.io/repository/github/bindglam/goldengine)
 
-GoldEngine은 마인크래프트 Paper 서버에 다양한 화폐 시스템을 손쉽게 추가하고 관리할 수 있도록 돕는 플러그인입니다.
+GoldEngine is a plugin that helps you easily add and manage various currency systems on your Minecraft Paper server.
 
-## 🚀 주요 기능
+## 🚀 Key Features
 
-*   **다중 화폐 지원**: 서버 내에서 여러 종류의 화폐를 정의하고 사용할 수 있습니다.
-*   **심플한 구조**: 화폐 기능의 필수적인 기능만 구현하여 쉽고 간단하게 사용할 수 있습니다.
-*   **유연한 API**: 개발자가 쉽게 화폐 시스템을 확장하고 연동할 수 있는 API를 제공합니다.
+*   **Multi-Currency Support**: Define and use multiple types of currencies within the server.
+*   **Flexible API**: Provides an API that allows developers to easily extend and integrate currency systems.
 
 ## 🧑🏻‍💻 API
 
@@ -23,14 +22,14 @@ dependencies {
 }
 ```
 
-## 📦 빌드 방법
+## Build
 
-이 프로젝트는 Gradle을 사용하여 빌드할 수 있습니다.
+This project can be built using Gradle.
 
 ```bash
 ./gradlew build
 ```
 
-## 📄 라이선스
+## License
 
-이 프로젝트는 [LICENSE](LICENSE) 파일에 명시된 라이선스를 따릅니다.
+This project follows the license specified in the [LICENSE](LICENSE) file.
