@@ -18,7 +18,7 @@ class GoldEnginePluginLoader : PluginLoader {
     private fun mavenCentral(): ClassPathLibrary {
         val resolver = MavenLibraryResolver()
 
-        resolver.addRepository(RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2/").build())
+        resolver.addRepository(RemoteRepository.Builder("central", "default", "https://maven-central.storage-download.googleapis.com/maven2").build())
 
         resolver.addDependency(Dependency(DefaultArtifact("com.alibaba.fastjson2:fastjson2:2.0.60"), null))
         resolver.addDependency(Dependency(DefaultArtifact("com.zaxxer:HikariCP:4.0.3"), null))
