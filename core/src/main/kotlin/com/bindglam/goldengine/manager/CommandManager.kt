@@ -4,7 +4,6 @@ import com.bindglam.goldengine.GoldEngine
 import com.bindglam.goldengine.account.Operation
 import com.bindglam.goldengine.utils.lang
 import com.bindglam.goldengine.utils.plugin
-import com.bindglam.goldengine.utils.won
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPIBukkitConfig
 import dev.jorel.commandapi.CommandAPICommand
@@ -99,59 +98,6 @@ object CommandManager : Managerial {
                             })
                     )
             )
-            .register()
-
-        CommandAPICommand("돈")
-            .withSubcommands(
-                CommandAPICommand("보내기")
-                    .withArguments(OfflinePlayerArgument("받는플레이어"), DoubleArgument("돈"))
-                    .executesPlayer(PlayerCommandExecutor { player, args ->
-                        val target = args["받는플레이어"] as OfflinePlayer
-                        val amount = BigDecimal.valueOf(args["돈"] as Double)
-
-                        AccountManagerImpl.getAccount(player.uniqueId).thenAccept { account -> account.use {
-                            AccountManagerImpl.getAccount(target.uniqueId).thenAccept { targetAccount -> targetAccount.use {
-                                if(account.balance(won()) < amount) {
-                                    player.sendMessage(lang("error_insufficient_money"))
-                                    return@thenAccept
-                                }
-                                targetAccount.modifyBalance(won(), amount, Operation.ADD)
-                                account.modifyBalance(won(), amount, Operation.SUBTRACT)
-
-                                player.sendMessage(lang("command_money_send_sender", target.name ?: "Unknown", won().format(account.balance(won()))))
-                                target.player?.sendMessage(lang("command_money_send_target", player.name, won().format(targetAccount.balance(won()))))
-                            } }
-                        } }
-                    }),
-                CommandAPICommand("자랑")
-                    .executesPlayer(PlayerCommandExecutor { player, _ ->
-                        if(!context.config().features.boast.enabled.value()) {
-                            player.sendMessage(lang("error_inavailable_feature"))
-                            return@PlayerCommandExecutor
-                        }
-
-                        AccountManagerImpl.getAccount(player.uniqueId).thenAccept { account -> account.use {
-                            val cost = BigDecimal.valueOf(context.config().features.boast.cost.value())
-
-                            if(account.balance(won()) < cost) {
-                                player.sendMessage(lang("error_insufficient_money_with_cost", won().format(cost)))
-                                return@thenAccept
-                            }
-
-                            Bukkit.broadcast(lang("command_money_boast_broadcast", player.name, won().format(account.balance(won()))))
-
-                            account.modifyBalance(won(), cost, Operation.SUBTRACT)
-
-                            player.sendMessage(lang("command_money_boast_sender", won().format(account.balance(won()))))
-                        } }
-                    })
-            )
-            .executesPlayer(PlayerCommandExecutor { player, _ ->
-                AccountManagerImpl.getAccount(player.uniqueId).thenAccept { account ->
-                    player.sendMessage(lang("command_money", won().format(account.balance(won()))))
-                    account.close()
-                }
-            })
             .register()
 
         CommandAPI.onEnable()

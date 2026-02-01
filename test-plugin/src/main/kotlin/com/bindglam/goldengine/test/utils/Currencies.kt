@@ -1,4 +1,4 @@
-package com.bindglam.goldengine.utils
+package com.bindglam.goldengine.test.utils
 
 import com.bindglam.goldengine.GoldEngine
 import com.bindglam.goldengine.currency.Currency
