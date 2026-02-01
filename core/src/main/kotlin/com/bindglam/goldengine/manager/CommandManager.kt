@@ -11,6 +11,7 @@ import org.incendo.cloud.execution.ExecutionCoordinator
 import org.incendo.cloud.paper.LegacyPaperCommandManager
 import org.incendo.cloud.parser.standard.DoubleParser
 import org.incendo.cloud.parser.standard.StringParser
+import org.incendo.cloud.permission.Permission
 import org.incendo.cloud.suggestion.Suggestion
 import org.incendo.cloud.suggestion.SuggestionProvider
 import java.math.BigDecimal
@@ -30,6 +31,7 @@ object CommandManager : Managerial {
         }
 
         manager.command(manager.commandBuilder("goldengine")
+            .permission(Permission.of("goldengine.command.reload"))
             .literal("reload")
             .handler { ctx ->
                 ctx.sender().sendMessage(lang("command_reload_start"))
@@ -37,6 +39,7 @@ object CommandManager : Managerial {
                 ctx.sender().sendMessage(lang("command_reload_end"))
             })
         manager.command(manager.commandBuilder("goldengine")
+            .permission(Permission.of("goldengine.command.balance.get"))
             .literal("balance")
             .literal("get")
             .required("target", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) } })
@@ -55,6 +58,7 @@ object CommandManager : Managerial {
                 }
             })
         manager.command(manager.commandBuilder("goldengine")
+            .permission(Permission.of("goldengine.command.balance.set"))
             .literal("balance")
             .literal("set")
             .required("target", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) } })
@@ -76,6 +80,7 @@ object CommandManager : Managerial {
                 }
             })
         manager.command(manager.commandBuilder("goldengine")
+            .permission(Permission.of("goldengine.command.balance.add"))
             .literal("balance")
             .literal("add")
             .required("target", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) } })
@@ -97,6 +102,7 @@ object CommandManager : Managerial {
                 }
             })
         manager.command(manager.commandBuilder("goldengine")
+            .permission(Permission.of("goldengine.command.balance.subtract"))
             .literal("balance")
             .literal("subtract")
             .required("target", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) } })
