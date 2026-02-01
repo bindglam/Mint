@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public enum DatabaseType {
     SQLITE(SQLiteDatabase::new),
-    MYSQL(SQLiteDatabase::new);
+    MYSQL(MySQLDatabase::new);
 
     private final Function<GoldEngineConfiguration, Database> supplier;
 

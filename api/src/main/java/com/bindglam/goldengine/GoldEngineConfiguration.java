@@ -19,6 +19,15 @@ public final class GoldEngineConfiguration extends Configuration {
             public final Field<Boolean> autoCommit = createPrimitiveField("database.SQLITE.auto-commit", true);
             public final Field<Integer> validTimeout = createPrimitiveField("database.SQLITE.valid-timeout", 500);
         }
+
+        public final MySQL mysql = new MySQL();
+        public final class MySQL {
+            public final Field<String> url = createPrimitiveField("database.MYSQL.url", "localhost:3306");
+            public final Field<String> database = createPrimitiveField("database.MYSQL.database", "minecraft");
+            public final Field<String> username = createPrimitiveField("database.MYSQL.username", "root");
+            public final Field<String> password = createPrimitiveField("database.MYSQL.password", "1234");
+            public final Field<Integer> maxPoolSize = createPrimitiveField("database.MYSQL.max-pool-size", 10);
+        }
     }
 
     public final Features features = new Features();
