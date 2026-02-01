@@ -7,8 +7,9 @@ plugins {
 
 dependencies {
     implementation(project(":api"))
-    implementation("org.incendo:cloud-paper:2.0.0-beta.14")
-    //implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.14")
+    compileOnly("com.github.bindglam:ConfigLib:1.0.0")
+    compileOnly("org.incendo:cloud-paper:2.0.0-beta.14")
+    //compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.14")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit")
     }
@@ -18,6 +19,7 @@ paperPluginYaml {
     name = rootProject.name
     version = rootProject.version.toString()
     main = "$group.GoldEnginePluginImpl"
+    loader = "$group.GoldEnginePluginLoader"
     apiVersion = "1.20"
     author = "Bindglam"
     dependencies {

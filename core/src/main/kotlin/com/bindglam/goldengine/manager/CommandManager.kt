@@ -11,6 +11,8 @@ import org.incendo.cloud.execution.ExecutionCoordinator
 import org.incendo.cloud.paper.LegacyPaperCommandManager
 import org.incendo.cloud.parser.standard.DoubleParser
 import org.incendo.cloud.parser.standard.StringParser
+import org.incendo.cloud.suggestion.Suggestion
+import org.incendo.cloud.suggestion.SuggestionProvider
 import java.math.BigDecimal
 
 object CommandManager : Managerial {
@@ -38,7 +40,7 @@ object CommandManager : Managerial {
             .literal("balance")
             .literal("get")
             .required("target", StringParser.stringParser())
-            .required("currency", StringParser.stringParser())
+            .required("currency", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> CurrencyManagerImpl.registry().entries().map { Suggestion.suggestion(it.id()) } })
             .handler { ctx ->
                 val target = Bukkit.getOfflinePlayer(ctx.get<String>("target"))
                 val currency = GoldEngine.instance().currencyManager().registry().get(ctx.get("currency")).orElse(null)
@@ -56,7 +58,7 @@ object CommandManager : Managerial {
             .literal("balance")
             .literal("set")
             .required("target", StringParser.stringParser())
-            .required("currency", StringParser.stringParser())
+            .required("currency", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> CurrencyManagerImpl.registry().entries().map { Suggestion.suggestion(it.id()) } })
             .required("amount", DoubleParser.doubleParser(0.0))
             .handler { ctx ->
                 val target = Bukkit.getOfflinePlayer(ctx.get<String>("target"))
@@ -77,7 +79,7 @@ object CommandManager : Managerial {
             .literal("balance")
             .literal("add")
             .required("target", StringParser.stringParser())
-            .required("currency", StringParser.stringParser())
+            .required("currency", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> CurrencyManagerImpl.registry().entries().map { Suggestion.suggestion(it.id()) } })
             .required("amount", DoubleParser.doubleParser(0.0))
             .handler { ctx ->
                 val target = Bukkit.getOfflinePlayer(ctx.get<String>("target"))
@@ -98,7 +100,7 @@ object CommandManager : Managerial {
             .literal("balance")
             .literal("subtract")
             .required("target", StringParser.stringParser())
-            .required("currency", StringParser.stringParser())
+            .required("currency", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> CurrencyManagerImpl.registry().entries().map { Suggestion.suggestion(it.id()) } })
             .required("amount", DoubleParser.doubleParser(0.0))
             .handler { ctx ->
                 val target = Bukkit.getOfflinePlayer(ctx.get<String>("target"))

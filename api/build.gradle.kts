@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api("com.github.bindglam:ConfigLib:1.0.0")
+    compileOnly("com.github.bindglam:ConfigLib:1.0.0")
 }

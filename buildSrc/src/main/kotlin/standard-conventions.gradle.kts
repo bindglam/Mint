@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.alibaba.fastjson2:fastjson2:2.0.60")
-    implementation("com.zaxxer:HikariCP:4.0.3")
+    compileOnly("com.alibaba.fastjson2:fastjson2:2.0.60")
+    compileOnly("com.zaxxer:HikariCP:4.0.3")
 }
 
 tasks {
