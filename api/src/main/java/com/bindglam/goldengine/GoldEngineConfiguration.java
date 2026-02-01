@@ -8,7 +8,7 @@ import com.bindglam.goldengine.database.DatabaseType;
 import java.io.File;
 
 public final class GoldEngineConfiguration extends Configuration {
-    public final Field<String> language = createPrimitiveField("language", "korean");
+    public final Field<String> language = createPrimitiveField("language", "english");
 
     public final Database database = new Database();
     public final class Database {

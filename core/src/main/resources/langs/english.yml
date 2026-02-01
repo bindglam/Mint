@@ -1,0 +1,4 @@
+error_invalid_currency: "<red>Invalid currency"
+command_reload_start: "<yellow>Reloading..."
+command_reload_end: "<green>Successfully reloaded!"
+command_money_balance_get: "<yellow>%s's current balance: %s"
