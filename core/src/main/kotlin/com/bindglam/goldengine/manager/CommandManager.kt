@@ -53,7 +53,7 @@ object CommandManager : Managerial {
                 }
 
                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
+                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance()[currency])))
                     account.close()
                 }
             })
@@ -74,8 +74,8 @@ object CommandManager : Managerial {
                 }
 
                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                    account.balance(currency, BigDecimal.valueOf(amount))
-                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
+                    account.balance()[currency] = BigDecimal.valueOf(amount)
+                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance()[currency])))
                     account.close()
                 }
             })
@@ -96,8 +96,8 @@ object CommandManager : Managerial {
                 }
 
                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                    account.modifyBalance(currency, BigDecimal.valueOf(amount), Operation.ADD)
-                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
+                    account.balance().modify(currency, BigDecimal.valueOf(amount), Operation.ADD)
+                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance()[currency])))
                     account.close()
                 }
             })
@@ -118,8 +118,8 @@ object CommandManager : Managerial {
                 }
 
                 AccountManagerImpl.getAccount(target.uniqueId).thenAccept { account ->
-                    account.modifyBalance(currency, BigDecimal.valueOf(amount), Operation.SUBTRACT)
-                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance(currency))))
+                    account.balance().modify(currency, BigDecimal.valueOf(amount), Operation.SUBTRACT)
+                    ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(account.balance()[currency])))
                     account.close()
                 }
             })

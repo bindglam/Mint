@@ -43,16 +43,16 @@ class GoldEngineTestPlugin : JavaPlugin() {
 
                         GoldEngine.instance().accountManager().getAccount(player.uniqueId).thenAccept { account -> account.use {
                             GoldEngine.instance().accountManager().getAccount(target.uniqueId).thenAccept { targetAccount -> targetAccount.use {
-                                if(account.balance(won()) < amount) {
+                                if(account.balance().get(won()) < amount) {
                                     player.sendMessage(Component.text("돈이 부족합니다!").color(NamedTextColor.RED))
                                     return@thenAccept
                                 }
-                                targetAccount.modifyBalance(won(), amount, Operation.ADD)
-                                account.modifyBalance(won(), amount, Operation.SUBTRACT)
+                                targetAccount.balance().modify(won(), amount, Operation.ADD)
+                                account.balance().modify(won(), amount, Operation.SUBTRACT)
 
-                                player.sendMessage(Component.text("${target.name ?: "누군가"}님에게 성공적으로 ${won().format(amount)}을 보냈습니다! ( 잔액: ${won().format(account.balance(won()))} )")
+                                player.sendMessage(Component.text("${target.name ?: "누군가"}님에게 성공적으로 ${won().format(amount)}을 보냈습니다! ( 잔액: ${won().format(account.balance()[won()])} )")
                                     .color(NamedTextColor.YELLOW))
-                                target.player?.sendMessage(Component.text("${player.name}님께서 ${won().format(amount)}을 보냈습니다! ( 잔액: ${won().format(targetAccount.balance(won()))}")
+                                target.player?.sendMessage(Component.text("${player.name}님께서 ${won().format(amount)}을 보냈습니다! ( 잔액: ${won().format(targetAccount.balance()[won()])}")
                                     .color(NamedTextColor.GREEN))
                             } }
                         } }
@@ -62,24 +62,24 @@ class GoldEngineTestPlugin : JavaPlugin() {
                         GoldEngine.instance().accountManager().getAccount(player.uniqueId).thenAccept { account -> account.use {
                             val cost = BigDecimal.valueOf(50000)
 
-                            if(account.balance(won()) < cost) {
+                            if(account.balance().get(won()) < cost) {
                                 player.sendMessage(Component.text("돈이 부족합니다! ( 필요 금액: ${won().format(cost)} )").color(NamedTextColor.RED))
                                 return@thenAccept
                             }
 
                             Bukkit.broadcast(player.name().color(NamedTextColor.YELLOW).append(Component.text("님은 ").color(NamedTextColor.WHITE))
-                                .append(Component.text(won().format(account.balance(won()))).color(NamedTextColor.GOLD))
+                                .append(Component.text(won().format(account.balance()[won()])).color(NamedTextColor.GOLD))
                                 .append(Component.text("을 가지고 있습니다!").color(NamedTextColor.WHITE)))
 
-                            account.modifyBalance(won(), cost, Operation.SUBTRACT)
+                            account.balance().modify(won(), cost, Operation.SUBTRACT)
 
-                            player.sendMessage(Component.text("성공적으로 자랑하였습니다! ( 잔액: ${won().format(account.balance(won()))} )").color(NamedTextColor.GREEN))
+                            player.sendMessage(Component.text("성공적으로 자랑하였습니다! ( 잔액: ${won().format(account.balance()[won()])} )").color(NamedTextColor.GREEN))
                         } }
                     })
             )
             .executesPlayer(PlayerCommandExecutor { player, _ ->
                 GoldEngine.instance().accountManager().getAccount(player.uniqueId).thenAccept { account ->
-                    player.sendMessage(Component.text("현재 잔액 : ${won().format(account.balance(won()))}")
+                    player.sendMessage(Component.text("현재 잔액 : ${won().format(account.balance()[won()])}")
                         .color(NamedTextColor.YELLOW))
                     account.close()
                 }

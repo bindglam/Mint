@@ -1,9 +1,10 @@
 package com.bindglam.goldengine.manager
 
-import com.bindglam.goldengine.GoldEngine
 import com.bindglam.goldengine.account.Account
 import com.bindglam.goldengine.account.OfflineAccount
+import com.bindglam.goldengine.account.OfflineAccountImpl
 import com.bindglam.goldengine.account.OnlineAccount
+import com.bindglam.goldengine.account.OnlineAccountImpl
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -30,7 +31,7 @@ object AccountManagerImpl : AccountManager {
 
     fun loadOnlineAccount(player: Player) {
         CompletableFuture.runAsync {
-            onlineAccounts[player.uniqueId] = OnlineAccount(player.uniqueId)
+            onlineAccounts[player.uniqueId] = OnlineAccountImpl(player.uniqueId)
         }
     }
 
@@ -50,5 +51,5 @@ object AccountManagerImpl : AccountManager {
     override fun getOnlineAccount(uuid: UUID): OnlineAccount? = onlineAccounts[uuid]
 
     override fun getOfflineAccount(uuid: UUID): CompletableFuture<OfflineAccount> =
-        CompletableFuture.supplyAsync { OfflineAccount(uuid) }
+        CompletableFuture.supplyAsync { OfflineAccountImpl(uuid) }
 }
