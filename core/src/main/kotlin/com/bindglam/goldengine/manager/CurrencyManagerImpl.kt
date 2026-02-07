@@ -3,7 +3,7 @@ package com.bindglam.goldengine.manager
 import com.bindglam.goldengine.GoldEngine
 import com.bindglam.goldengine.currency.Currency
 import com.bindglam.goldengine.currency.CurrencyDisplay
-import com.bindglam.goldengine.currency.CurrencyRegistry
+import com.bindglam.goldengine.currency.CurrencyRegistryImpl
 import com.bindglam.goldengine.utils.plugin
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
@@ -13,7 +13,7 @@ object CurrencyManagerImpl : CurrencyManager {
     private val currenciesFolder = File("plugins/GoldEngine/currencies")
     private val defaultCurrencies = listOf("won")
 
-    private val registry = CurrencyRegistry()
+    private val registry = CurrencyRegistryImpl()
 
     override fun start(context: Context) {
         if(!currenciesFolder.exists()) {
