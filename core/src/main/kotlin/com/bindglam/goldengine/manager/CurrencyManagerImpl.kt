@@ -1,5 +1,6 @@
 package com.bindglam.goldengine.manager
 
+import com.bindglam.goldengine.GoldEngine
 import com.bindglam.goldengine.currency.Currency
 import com.bindglam.goldengine.currency.CurrencyDisplay
 import com.bindglam.goldengine.currency.CurrencyRegistry
@@ -57,4 +58,5 @@ object CurrencyManagerImpl : CurrencyManager {
     }
 
     override fun registry() = registry
+    override fun defaultCurrency() = registry[GoldEngine.config().economy.currency.defaultCurrency.value()].orElseThrow()!!
 }

@@ -30,6 +30,14 @@ public final class GoldEngineConfiguration extends Configuration {
         }
     }
 
+    public final Economy economy = new Economy();
+    public final class Economy {
+        public final Currency currency = new Currency();
+        public final class Currency {
+            public final Field<String> defaultCurrency = createPrimitiveField("economy.currency.default-currency", "won");
+        }
+    }
+
     public GoldEngineConfiguration(File file) {
         super(file);
     }

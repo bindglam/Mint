@@ -11,9 +11,6 @@ import java.text.DecimalFormat;
 public record Currency(String id, CurrencyDisplay display) {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###,###.#");
 
-    @Deprecated
-    public static final String WON = "won";
-
     public String format(BigDecimal amount) {
         String name;
         if(amount.compareTo(BigDecimal.ONE) <= 0)

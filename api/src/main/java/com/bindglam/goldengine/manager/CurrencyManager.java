@@ -1,6 +1,8 @@
 package com.bindglam.goldengine.manager;
 
+import com.bindglam.goldengine.currency.Currency;
 import com.bindglam.goldengine.currency.CurrencyRegistry;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * CurrencyManager interface
@@ -8,5 +10,7 @@ import com.bindglam.goldengine.currency.CurrencyRegistry;
  * @author bindglam
  */
 public interface CurrencyManager extends Managerial, Reloadable {
-    CurrencyRegistry registry();
+    @NotNull CurrencyRegistry registry();
+
+    @NotNull Currency defaultCurrency();
 }

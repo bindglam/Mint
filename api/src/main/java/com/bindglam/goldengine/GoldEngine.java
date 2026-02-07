@@ -21,6 +21,10 @@ public final class GoldEngine {
         return GoldEngine.instance;
     }
 
+    public static @NotNull GoldEngineConfiguration config() {
+        return instance().config();
+    }
+
     @ApiStatus.Internal
     static void registerInstance(@NotNull GoldEnginePlugin instance) {
         if(GoldEngine.instance != null)

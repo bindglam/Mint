@@ -3,4 +3,4 @@ package com.bindglam.goldengine.test.utils
 import com.bindglam.goldengine.GoldEngine
 import com.bindglam.goldengine.currency.Currency
 
-fun won(): Currency = GoldEngine.instance().currencyManager().registry().get(Currency.WON).orElseThrow()
+fun won(): Currency = GoldEngine.instance().currencyManager().registry().get("won").orElseThrow()

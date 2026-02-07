@@ -44,16 +44,16 @@ public interface Account extends AutoCloseable {
 
     @Deprecated
     default BigDecimal balance() {
-        return balance(GoldEngine.instance().currencyManager().registry().get(Currency.WON).orElseThrow());
+        return balance(GoldEngine.instance().currencyManager().defaultCurrency());
     }
 
     @Deprecated
     default void balance(BigDecimal balance) {
-        balance(GoldEngine.instance().currencyManager().registry().get(Currency.WON).orElseThrow(), balance);
+        balance(GoldEngine.instance().currencyManager().defaultCurrency(), balance);
     }
 
     @Deprecated
     default boolean modifyBalance(BigDecimal amount, Operation operation) {
-        return modifyBalance(GoldEngine.instance().currencyManager().registry().get(Currency.WON).orElseThrow(), amount, operation);
+        return modifyBalance(GoldEngine.instance().currencyManager().defaultCurrency(), amount, operation);
     }
 }
