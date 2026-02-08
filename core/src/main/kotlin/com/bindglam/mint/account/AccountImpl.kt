@@ -87,7 +87,7 @@ class AccountImpl(private val holder: UUID) : Account {
                     }
                 }
 
-                logger.log(Log(Timestamp.from(Instant.now()), operation, operationResult, value))
+                logger.log(Log(Timestamp.from(Instant.now()), operation, currency, operationResult, value))
             }
 
             return@supplyAsync operationResult

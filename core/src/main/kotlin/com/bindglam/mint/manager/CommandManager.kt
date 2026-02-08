@@ -97,7 +97,7 @@ object CommandManager : Managerial {
                 val account = AccountManagerImpl.getAccount(target.uniqueId)
                 account.logger().retrieveLogs(10).thenAccept { logs ->
                     logs.forEach { log ->
-                        ctx.sender().sendMessage(lang("command_money_balance_logs", log.timestamp(), log.operation(), log.value(), log.result().result(),
+                        ctx.sender().sendMessage(lang("command_money_balance_logs", log.timestamp(), log.operation(), log.currency().format(log.value()), log.currency().format(log.result().result()),
                             if(log.result().isSuccess) "<green>O" else "<red>X"))
                     }
                 }
