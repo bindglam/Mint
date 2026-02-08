@@ -16,7 +16,7 @@ import java.io.File
 
 class MintPluginImpl : JavaPlugin(), MintPlugin {
     companion object {
-        private val CONFIG_FILE =  File("plugins/GoldEngine", "config.yml")
+        private val CONFIG_FILE =  File("plugins/Mint", "config.yml")
     }
 
     private val config = MintConfiguration(CONFIG_FILE)

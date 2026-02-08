@@ -7,7 +7,7 @@ import java.io.File
 
 object LanguageManager : Managerial, Reloadable {
     private val builtInLanguages = listOf("english", "korean")
-    private val langsFolder = File("plugins/GoldEngine/langs")
+    private val langsFolder = File("plugins/Mint/langs")
 
     private val langs = hashMapOf<String, Language>()
 

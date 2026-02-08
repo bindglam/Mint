@@ -10,7 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
 object CurrencyManagerImpl : CurrencyManager {
-    private val currenciesFolder = File("plugins/GoldEngine/currencies")
+    private val currenciesFolder = File("plugins/Mint/currencies")
     private val defaultCurrencies = listOf("won")
 
     private val registry = CurrencyRegistryImpl()

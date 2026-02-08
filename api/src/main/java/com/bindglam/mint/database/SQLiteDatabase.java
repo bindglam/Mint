@@ -51,7 +51,7 @@ public final class SQLiteDatabase implements Database {
 
     private void connect() {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:plugins/GoldEngine/database.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:plugins/Mint/database.db");
             connection.setAutoCommit(config.database.sqlite.autoCommit.value());
         } catch (SQLException e) {
             throw new RuntimeException("Failed to connect to database", e);

@@ -30,16 +30,16 @@ object CommandManager : Managerial {
             manager.registerAsynchronousCompletions()
         }
 
-        manager.command(manager.commandBuilder("goldengine")
-            .permission(Permission.of("goldengine.command.reload"))
+        manager.command(manager.commandBuilder("mint")
+            .permission(Permission.of("mint.command.reload"))
             .literal("reload")
             .handler { ctx ->
                 ctx.sender().sendMessage(lang("command_reload_start"))
                 Mint.instance().reload()
                 ctx.sender().sendMessage(lang("command_reload_end"))
             })
-        manager.command(manager.commandBuilder("goldengine")
-            .permission(Permission.of("goldengine.command.balance.get"))
+        manager.command(manager.commandBuilder("mint")
+            .permission(Permission.of("mint.command.balance.get"))
             .literal("balance")
             .literal("get")
             .required("target", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) } })
@@ -57,8 +57,8 @@ object CommandManager : Managerial {
                     account.close()
                 }
             })
-        manager.command(manager.commandBuilder("goldengine")
-            .permission(Permission.of("goldengine.command.balance.modify"))
+        manager.command(manager.commandBuilder("mint")
+            .permission(Permission.of("mint.command.balance.modify"))
             .literal("balance")
             .literal("modify")
             .required("target", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) } })
