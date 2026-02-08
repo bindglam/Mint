@@ -9,6 +9,7 @@ import com.bindglam.mint.manager.ContextImpl
 import com.bindglam.mint.manager.CurrencyManagerImpl
 import com.bindglam.mint.manager.LanguageManager
 import com.bindglam.mint.manager.Reloadable
+import com.bindglam.mint.utils.Constants
 import com.bindglam.mint.utils.UpdateChecker
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
@@ -16,7 +17,7 @@ import java.io.File
 
 class MintPluginImpl : JavaPlugin(), MintPlugin {
     companion object {
-        private val CONFIG_FILE =  File("plugins/Mint", "config.yml")
+        private val CONFIG_FILE =  File("plugins/${Constants.PLUGIN_NAME}", "config.yml")
     }
 
     private val config = MintConfiguration(CONFIG_FILE)

@@ -1,6 +1,7 @@
 package com.bindglam.mint.database;
 
 import com.bindglam.mint.MintConfiguration;
+import com.bindglam.mint.utils.Constants;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public final class SQLiteDatabase implements Database {
 
     private void connect() {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:plugins/Mint/database.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:plugins/" + Constants.PLUGIN_NAME + "/database.db");
             connection.setAutoCommit(config.database.sqlite.autoCommit.value());
         } catch (SQLException e) {
             throw new RuntimeException("Failed to connect to database", e);

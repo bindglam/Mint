@@ -2,12 +2,13 @@ package com.bindglam.mint.manager
 
 import com.bindglam.mint.MintConfiguration
 import com.bindglam.mint.language.Language
+import com.bindglam.mint.utils.Constants
 import com.bindglam.mint.utils.plugin
 import java.io.File
 
 object LanguageManager : Managerial, Reloadable {
     private val builtInLanguages = listOf("english", "korean")
-    private val langsFolder = File("plugins/Mint/langs")
+    private val langsFolder = File("plugins/${Constants.PLUGIN_NAME}/langs")
 
     private val langs = hashMapOf<String, Language>()
 
