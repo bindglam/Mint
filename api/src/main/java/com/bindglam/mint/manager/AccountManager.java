@@ -3,7 +3,6 @@ package com.bindglam.mint.manager;
 import com.bindglam.mint.account.Account;
 import com.bindglam.mint.account.OfflineAccount;
 import com.bindglam.mint.account.OnlineAccount;
-import com.bindglam.mint.utils.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,8 +15,6 @@ import java.util.concurrent.CompletableFuture;
  * @author bindglam
  */
 public interface AccountManager extends Managerial {
-    String ACCOUNTS_TABLE_NAME = Constants.PLUGIN_ID + "_accounts";
-
     /**
      * Get account by uuid
      *

@@ -5,6 +5,7 @@ import com.bindglam.mint.account.OfflineAccount
 import com.bindglam.mint.account.OfflineAccountImpl
 import com.bindglam.mint.account.OnlineAccount
 import com.bindglam.mint.account.OnlineAccountImpl
+import com.bindglam.mint.utils.Constants
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -12,12 +13,14 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 
 object AccountManagerImpl : AccountManager {
+    const val ACCOUNTS_TABLE_NAME = "${Constants.PLUGIN_ID}_accounts"
+
     private val onlineAccounts = ConcurrentHashMap<UUID, OnlineAccount>()
 
     override fun start(context: Context) {
         context.plugin().database().getConnection { connection ->
             connection.createStatement().use { statement ->
-                statement.execute("CREATE TABLE IF NOT EXISTS ${AccountManager.ACCOUNTS_TABLE_NAME}" +
+                statement.execute("CREATE TABLE IF NOT EXISTS $ACCOUNTS_TABLE_NAME" +
                         "(holder VARCHAR(36) PRIMARY KEY, balance JSON)")
             }
         }

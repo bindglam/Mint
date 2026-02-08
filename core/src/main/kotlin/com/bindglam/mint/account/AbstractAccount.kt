@@ -3,6 +3,7 @@ package com.bindglam.mint.account
 import com.alibaba.fastjson2.JSON
 import com.bindglam.mint.Mint
 import com.bindglam.mint.manager.AccountManager
+import com.bindglam.mint.manager.AccountManagerImpl
 import java.util.*
 
 abstract class AbstractAccount(private val holder: UUID) : Account {
@@ -21,7 +22,7 @@ abstract class AbstractAccount(private val holder: UUID) : Account {
     private fun load() {
         Mint.instance().database().getConnection { connection ->
             connection.prepareStatement(
-                "SELECT * FROM ${AccountManager.ACCOUNTS_TABLE_NAME} WHERE holder = ?"
+                "SELECT * FROM ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} WHERE holder = ?"
             ).use { statement ->
                 statement.setString(1, holder.toString())
 
@@ -41,9 +42,9 @@ abstract class AbstractAccount(private val holder: UUID) : Account {
     override fun save() {
         Mint.instance().database().getConnection { connection ->
             val query = if (isJustCreated) {
-                "INSERT INTO ${AccountManager.ACCOUNTS_TABLE_NAME} (holder, balance) VALUES (?, ?)"
+                "INSERT INTO ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} (holder, balance) VALUES (?, ?)"
             } else {
-                "UPDATE ${AccountManager.ACCOUNTS_TABLE_NAME} SET balance = ? WHERE holder = ?"
+                "UPDATE ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} SET balance = ? WHERE holder = ?"
             }
 
             connection.prepareStatement(query).use { statement ->
