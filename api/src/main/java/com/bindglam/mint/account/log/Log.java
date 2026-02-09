@@ -6,6 +6,15 @@ import com.bindglam.mint.currency.Currency;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+/**
+ * Log record
+ *
+ * @param timestamp
+ * @param operation
+ * @param currency
+ * @param result
+ * @param value
+ */
 public record Log(
         Timestamp timestamp,
         Operation operation,

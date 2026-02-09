@@ -21,6 +21,9 @@ public interface Account {
      */
     @NotNull UUID holder();
 
+    /**
+     * Get the logger of the account
+     */
     @NotNull TransactionLogger logger();
 
     /**

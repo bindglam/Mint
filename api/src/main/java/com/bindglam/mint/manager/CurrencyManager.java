@@ -10,7 +10,13 @@ import org.jetbrains.annotations.NotNull;
  * @author bindglam
  */
 public interface CurrencyManager extends Managerial, Reloadable {
+    /**
+     * Get the currency registry
+     */
     @NotNull CurrencyRegistry registry();
 
+    /**
+     * Get the default currency
+     */
     @NotNull Currency defaultCurrency();
 }
