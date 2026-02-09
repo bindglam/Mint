@@ -1,6 +1,6 @@
 package com.bindglam.mint.compatibility.vault
 
-import com.bindglam.mint.account.Operation
+import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.manager.AccountManagerImpl
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse

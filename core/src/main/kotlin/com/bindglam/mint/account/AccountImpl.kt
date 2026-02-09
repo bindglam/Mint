@@ -3,6 +3,7 @@ package com.bindglam.mint.account
 import com.bindglam.mint.Mint
 import com.bindglam.mint.account.log.Log
 import com.bindglam.mint.account.log.TransactionLoggerImpl
+import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.currency.Currency
 import com.bindglam.mint.manager.AccountManagerImpl
 import java.math.BigDecimal
@@ -24,20 +25,7 @@ class AccountImpl(private val holder: UUID) : Account {
 
     private val logger = TransactionLoggerImpl(this)
 
-    private fun isNeedToInsert(connection: Connection, currency: Currency): Boolean {
-        connection.prepareStatement(
-            "SELECT * FROM ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} WHERE holder = ? AND currency = ?"
-        ).use { statement ->
-            statement.setString(1, holder.toString())
-            statement.setString(2, currency.id())
-
-            statement.executeQuery().use { result ->
-                return !result.next()
-            }
-        }
-    }
-
-    private fun getSync(connection: Connection, currency: Currency): BigDecimal {
+    private fun getInternal(connection: Connection, currency: Currency): BigDecimal {
         connection.prepareStatement(
             "SELECT * FROM ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} WHERE holder = ? AND currency = ?"
         ).use { statement ->
@@ -46,7 +34,16 @@ class AccountImpl(private val holder: UUID) : Account {
 
             statement.executeQuery().use { result ->
                 return if(result.next()) result.getBigDecimal("balance")
-                else BigDecimal.ZERO
+                else {
+                    connection.prepareStatement("INSERT INTO ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} (holder, currency, balance) VALUES (?, ?, ?)").use { statement2 ->
+                        statement2.setString(1, holder.toString())
+                        statement2.setString(2, currency.id())
+                        statement2.setBigDecimal(3, BigDecimal.ZERO)
+                        statement2.executeUpdate()
+                    }
+
+                    BigDecimal.ZERO
+                }
             }
         }
     }
@@ -54,7 +51,7 @@ class AccountImpl(private val holder: UUID) : Account {
     override fun getBalance(currency: Currency): CompletableFuture<BigDecimal> =
         CompletableFuture.supplyAsync {
             var balance = BigDecimal.ZERO
-            Mint.instance().database().getConnection { balance = getSync(it, currency) }
+            Mint.instance().database().getConnection { balance = getInternal(it, currency) }
             return@supplyAsync balance
         }
 
@@ -63,32 +60,19 @@ class AccountImpl(private val holder: UUID) : Account {
             var operationResult = Operation.Result.failure(BigDecimal.ZERO)
 
             Mint.instance().database().getConnection { connection ->
-                operationResult = operation.operate(getSync(connection, currency), value)
+                getInternal(connection, currency)
 
-                if(operationResult.isSuccess) {
-                    val needToInsert = isNeedToInsert(connection, currency)
-                    val query = if (needToInsert) {
-                        "INSERT INTO ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} (holder, currency, balance) VALUES (?, ?, ?)"
-                    } else {
-                        "UPDATE ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} SET balance = ? WHERE holder = ? AND currency = ?"
-                    }
+                connection.prepareStatement(operation.getQuery(AccountManagerImpl.ACCOUNTS_TABLE_NAME)).use { statement ->
+                    operation.applyStatement(statement, holder, currency, value)
 
-                    connection.prepareStatement(query).use { statement ->
-                        if (needToInsert) {
-                            statement.setString(1, holder.toString())
-                            statement.setString(2, currency.id())
-                            statement.setBigDecimal(3, operationResult.result)
-                        } else {
-                            statement.setBigDecimal(1, operationResult.result)
-                            statement.setString(2, holder.toString())
-                            statement.setString(3, currency.id())
-                        }
-                        statement.executeUpdate()
-                    }
+                    operationResult = if(statement.executeUpdate() >= 1)
+                        Operation.Result.success(getInternal(connection, currency))
+                    else
+                        Operation.Result.failure(getInternal(connection, currency))
                 }
-
-                logger.log(Log(Timestamp.from(Instant.now()), operation, currency, operationResult, value))
             }
+
+            logger.log(Log(Timestamp.from(Instant.now()), operation, currency, operationResult, value))
 
             return@supplyAsync operationResult
         }

@@ -1,7 +1,7 @@
 package com.bindglam.mint.manager
 
 import com.bindglam.mint.Mint
-import com.bindglam.mint.account.Operation
+import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.utils.lang
 import com.bindglam.mint.utils.plugin
 import org.bukkit.Bukkit

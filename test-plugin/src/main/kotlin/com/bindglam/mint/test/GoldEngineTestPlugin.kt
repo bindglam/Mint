@@ -1,21 +1,8 @@
 package com.bindglam.mint.test
 
-import com.bindglam.mint.Mint
-import com.bindglam.mint.account.Operation
-import com.bindglam.mint.test.utils.won
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPIBukkitConfig
-import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.DoubleArgument
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument
-import dev.jorel.commandapi.executors.PlayerCommandExecutor
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
-import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import org.bukkit.plugin.java.JavaPlugin
-import java.math.BigDecimal
-import kotlin.use
 
 class GoldEngineTestPlugin : JavaPlugin() {
     override fun onLoad() {

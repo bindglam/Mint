@@ -2,7 +2,7 @@ package com.bindglam.mint.account.log
 
 import com.bindglam.mint.Mint
 import com.bindglam.mint.account.AccountImpl
-import com.bindglam.mint.account.Operation
+import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.manager.AccountManagerImpl
 import org.jetbrains.annotations.Range
 import org.jetbrains.annotations.Unmodifiable
