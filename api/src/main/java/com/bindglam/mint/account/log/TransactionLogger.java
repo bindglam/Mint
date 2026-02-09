@@ -8,5 +8,5 @@ import java.util.concurrent.CompletableFuture;
 
 public interface TransactionLogger {
     @Unmodifiable
-    CompletableFuture<List<Log>> retrieveLogs(@Range(from = 1L, to = 99L) int limit);
+    CompletableFuture<List<Log>> retrieveLogs(@Range(from = 1L, to = 99L) int limit, int offset);
 }

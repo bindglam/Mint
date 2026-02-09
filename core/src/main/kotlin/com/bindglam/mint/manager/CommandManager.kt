@@ -10,6 +10,7 @@ import org.incendo.cloud.bukkit.CloudBukkitCapabilities
 import org.incendo.cloud.execution.ExecutionCoordinator
 import org.incendo.cloud.paper.LegacyPaperCommandManager
 import org.incendo.cloud.parser.standard.DoubleParser
+import org.incendo.cloud.parser.standard.IntegerParser
 import org.incendo.cloud.parser.standard.StringParser
 import org.incendo.cloud.permission.Permission
 import org.incendo.cloud.suggestion.Suggestion
@@ -91,11 +92,13 @@ object CommandManager : Managerial {
             .literal("balance")
             .literal("logs")
             .required("target", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) } })
+            .optional("page", IntegerParser.integerParser(1))
             .handler { ctx ->
                 val target = Bukkit.getOfflinePlayer(ctx.get<String>("target"))
+                val page = ctx.getOrDefault("page", 1)
 
                 val account = AccountManagerImpl.getAccount(target.uniqueId)
-                account.logger().retrieveLogs(10).thenAccept { logs ->
+                account.logger().retrieveLogs(10, (page - 1) * 10).thenAccept { logs ->
                     logs.forEach { log ->
                         ctx.sender().sendMessage(lang("command_money_balance_logs", log.timestamp(), log.operation(), log.currency().format(log.value()), log.currency().format(log.result().result()),
                             if(log.result().isSuccess) "<green>O" else "<red>X"))

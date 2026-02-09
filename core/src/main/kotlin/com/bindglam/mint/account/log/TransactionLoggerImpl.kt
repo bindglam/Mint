@@ -34,12 +34,12 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
         }
     }
 
-    override fun retrieveLogs(limit: @Range(from = 1, to = 99) Int): @Unmodifiable CompletableFuture<List<Log>> =
+    override fun retrieveLogs(limit: @Range(from = 1, to = 99) Int, offset: Int): @Unmodifiable CompletableFuture<List<Log>> =
         CompletableFuture.supplyAsync {
             val list = arrayListOf<Log>()
 
             Mint.instance().database().getConnection { connection ->
-                connection.prepareStatement("SELECT * FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ? ORDER BY timestamp ASC LIMIT $limit").use { statement ->
+                connection.prepareStatement("SELECT * FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ? ORDER BY timestamp ASC LIMIT $limit OFFSET $offset").use { statement ->
                     statement.setString(1, account.holder().toString())
 
                     statement.executeQuery().use { result ->
