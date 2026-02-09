@@ -32,11 +32,11 @@ public interface Account {
     /**
      * Modify the balance of the account in the given currency
      *
+     * @param operation operation
      * @param currency currency
      * @param value value
-     * @param operation operation
      */
-    CompletableFuture<Operation.Result> modifyBalance(Currency currency, BigDecimal value, Operation operation);
+    CompletableFuture<Operation.Result> modifyBalance(Operation operation, Currency currency, BigDecimal value);
 
     /**
      * Get the balance of the account in the default currency
@@ -48,10 +48,10 @@ public interface Account {
     /**
      * Modify the balance of the account in the default currency
      *
-     * @param value value
      * @param operation operation
+     * @param value value
      */
-    default CompletableFuture<Operation.Result> modifyBalance(BigDecimal value, Operation operation) {
-        return modifyBalance(Mint.instance().currencyManager().defaultCurrency(), value, operation);
+    default CompletableFuture<Operation.Result> modifyBalance(Operation operation, BigDecimal value) {
+        return modifyBalance(operation, Mint.instance().currencyManager().defaultCurrency(), value);
     }
 }

@@ -46,7 +46,7 @@ object VaultEconomy : AbstractEconomy() {
         val player = Bukkit.getOfflinePlayer(playerName)
 
         val account = AccountManagerImpl.getAccount(player.uniqueId)
-        val result = account.modifyBalance(BigDecimal.valueOf(amount), Operation.WITHDRAW).get()
+        val result = account.modifyBalance(Operation.WITHDRAW, BigDecimal.valueOf(amount)).get()
         return if(result.isSuccess)
             EconomyResponse(amount, result.result().toDouble(), EconomyResponse.ResponseType.SUCCESS, null)
         else
@@ -59,7 +59,7 @@ object VaultEconomy : AbstractEconomy() {
         val player = Bukkit.getOfflinePlayer(playerName)
 
         val account = AccountManagerImpl.getAccount(player.uniqueId)
-        val result = account.modifyBalance(BigDecimal.valueOf(amount), Operation.DEPOSIT).get()
+        val result = account.modifyBalance(Operation.DEPOSIT, BigDecimal.valueOf(amount)).get()
         return if(result.isSuccess)
             EconomyResponse(amount, result.result().toDouble(), EconomyResponse.ResponseType.SUCCESS, null)
         else

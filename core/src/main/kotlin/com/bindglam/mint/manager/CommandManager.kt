@@ -82,7 +82,7 @@ object CommandManager : Managerial {
                 }
 
                 val account = AccountManagerImpl.getAccount(target.uniqueId)
-                account.modifyBalance(currency, BigDecimal.valueOf(amount), operation).thenAccept { result ->
+                account.modifyBalance(operation, currency, BigDecimal.valueOf(amount)).thenAccept { result ->
                     ctx.sender().sendMessage(lang("command_money_balance_get", target.name ?: "Unknown", currency.format(result.result())))
                 }
             })

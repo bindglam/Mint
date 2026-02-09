@@ -58,7 +58,7 @@ class AccountImpl(private val holder: UUID) : Account {
             return@supplyAsync balance
         }
 
-    override fun modifyBalance(currency: Currency, value: BigDecimal, operation: Operation): CompletableFuture<Operation.Result> =
+    override fun modifyBalance(operation: Operation, currency: Currency, value: BigDecimal): CompletableFuture<Operation.Result> =
         CompletableFuture.supplyAsync {
             var operationResult = Operation.Result.failure(BigDecimal.ZERO)
 
