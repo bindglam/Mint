@@ -13,7 +13,7 @@ import java.time.Instant
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class AccountImpl(private val holder: UUID) : Account {
+open class AccountImpl(private val holder: UUID) : Account {
     companion object {
         fun createTable(connection: Connection) {
             connection.createStatement().use { statement ->
@@ -25,7 +25,7 @@ class AccountImpl(private val holder: UUID) : Account {
 
     private val logger = TransactionLoggerImpl(this)
 
-    private fun getInternal(connection: Connection, currency: Currency): BigDecimal {
+    protected open fun getBalanceInternal(connection: Connection, currency: Currency): BigDecimal {
         connection.prepareStatement(
             "SELECT * FROM ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} WHERE holder = ? AND currency = ?"
         ).use { statement ->
@@ -48,33 +48,37 @@ class AccountImpl(private val holder: UUID) : Account {
         }
     }
 
+    protected open fun modifyBalanceInternal(connection: Connection, operation: Operation, currency: Currency, value: BigDecimal): Operation.Result {
+        val operationResult: Operation.Result
+
+        getBalanceInternal(connection, currency)
+
+        connection.prepareStatement(operation.getQuery(AccountManagerImpl.ACCOUNTS_TABLE_NAME)).use { statement ->
+            operation.applyStatement(statement, holder, currency, value)
+
+            operationResult = if(statement.executeUpdate() >= 1)
+                Operation.Result.success(getBalanceInternal(connection, currency))
+            else
+                Operation.Result.failure(getBalanceInternal(connection, currency))
+        }
+
+        logger.log(Log(Timestamp.from(Instant.now()), operation, currency, operationResult, value))
+
+        return operationResult
+    }
+
     override fun getBalance(currency: Currency): CompletableFuture<BigDecimal> =
         CompletableFuture.supplyAsync {
             var balance = BigDecimal.ZERO
-            Mint.instance().database().getConnection { balance = getInternal(it, currency) }
+            Mint.instance().database().getConnection { balance = getBalanceInternal(it, currency) }
             return@supplyAsync balance
         }
 
     override fun modifyBalance(operation: Operation, currency: Currency, value: BigDecimal): CompletableFuture<Operation.Result> =
         CompletableFuture.supplyAsync {
-            var operationResult = Operation.Result.failure(BigDecimal.ZERO)
-
-            Mint.instance().database().getConnection { connection ->
-                getInternal(connection, currency)
-
-                connection.prepareStatement(operation.getQuery(AccountManagerImpl.ACCOUNTS_TABLE_NAME)).use { statement ->
-                    operation.applyStatement(statement, holder, currency, value)
-
-                    operationResult = if(statement.executeUpdate() >= 1)
-                        Operation.Result.success(getInternal(connection, currency))
-                    else
-                        Operation.Result.failure(getInternal(connection, currency))
-                }
-            }
-
-            logger.log(Log(Timestamp.from(Instant.now()), operation, currency, operationResult, value))
-
-            return@supplyAsync operationResult
+            var result = Operation.Result.failure(BigDecimal.ZERO)
+            Mint.instance().database().getConnection { result = modifyBalanceInternal(it, operation, currency, value) }
+            return@supplyAsync result
         }
 
     override fun holder() = holder

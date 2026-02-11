@@ -14,13 +14,15 @@ import java.util.function.BiFunction;
  * @author bindglam
  */
 public enum Operation {
-    DEPOSIT((table) -> "UPDATE " + table + " SET balance = balance + ? WHERE holder = ? AND currency = ?",
+    DEPOSIT(BigDecimal::add,
+            (table) -> "UPDATE " + table + " SET balance = balance + ? WHERE holder = ? AND currency = ?",
             (statement, holder, currency, value) -> {
                 statement.setBigDecimal(1, value);
                 statement.setString(2, holder.toString());
                 statement.setString(3, currency.id());
             }),
-    WITHDRAW((table) -> "UPDATE " + table + " SET balance = balance - ? WHERE holder = ? AND currency = ? AND balance >= ?",
+    WITHDRAW((a, b) -> a.compareTo(b) > 0 ? a.subtract(b) : a,
+            (table) -> "UPDATE " + table + " SET balance = balance - ? WHERE holder = ? AND currency = ? AND balance >= ?",
             (statement, holder, currency, value) -> {
                 statement.setBigDecimal(1, value);
                 statement.setString(2, holder.toString());
@@ -28,12 +30,18 @@ public enum Operation {
                 statement.setBigDecimal(4, value);
             });
 
+    private final BiFunction<BigDecimal, BigDecimal, BigDecimal> binaryOperator;
     private final QuerySupplier query;
     private final StatementApplier applier;
 
-    Operation(QuerySupplier query, StatementApplier applier) {
+    Operation(BiFunction<BigDecimal, BigDecimal, BigDecimal> binaryOperator, QuerySupplier query, StatementApplier applier) {
+        this.binaryOperator = binaryOperator;
         this.query = query;
         this.applier = applier;
+    }
+
+    public BigDecimal operateBinary(BigDecimal a, BigDecimal b) {
+        return binaryOperator.apply(a, b);
     }
 
     public String getQuery(String table) {
