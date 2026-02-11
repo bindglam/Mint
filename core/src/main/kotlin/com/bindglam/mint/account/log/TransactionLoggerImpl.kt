@@ -14,7 +14,7 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
         fun createTable(connection: Connection) {
             connection.createStatement().use { statement ->
                 statement.execute("CREATE TABLE IF NOT EXISTS ${AccountManagerImpl.LOGS_TABLE_NAME}" +
-                        "(id INTEGER PRIMARY KEY AUTOINCREMENT, holder VARCHAR(36), timestamp TIMESTAMP, operation VARCHAR(32), currency VARCHAR(32), result_success BOOLEAN, result_result DECIMAL, value DECIMAL)")
+                        "(holder VARCHAR(36), timestamp TIMESTAMP, operation VARCHAR(32), currency VARCHAR(32), result_success BOOLEAN, result_result DECIMAL, value DECIMAL)")
             }
         }
     }
