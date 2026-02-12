@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":api"))
-    compileOnly("org.bstats:bstats-bukkit:3.1.0")
+    implementation("org.bstats:bstats-bukkit:3.1.0")
     compileOnly("com.github.bindglam:ConfigLib:1.0.0")
     compileOnly("org.incendo:cloud-paper:2.0.0-beta.14")
     //compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.14")
