@@ -69,6 +69,7 @@ modrinth {
     modrinth {
         uploadFile.set(tasks.shadowJar)
         gameVersions = supportedVersions
+        loaders = listOf("paper", "folia", "purpur")
         dependencies {
             optional.project(
                 "vaultunlocked"
