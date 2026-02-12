@@ -11,6 +11,7 @@ import com.bindglam.mint.manager.LanguageManager
 import com.bindglam.mint.manager.Reloadable
 import com.bindglam.mint.utils.Constants
 import com.bindglam.mint.utils.UpdateChecker
+import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -31,6 +32,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
     )
 
     private lateinit var database: Database
+    private lateinit var metrics: Metrics
 
     override fun onEnable() {
         if(!CONFIG_FILE.parentFile.exists())
@@ -41,6 +43,8 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
         Mint.registerInstance(this)
 
         server.pluginManager.registerEvents(PlayerJoinQuitListener, this)
+
+        this.metrics = Metrics(this, Constants.BSTATS_PLUGIN_ID)
 
         this.database = this.config.database.type.value().create(this.config)
         this.database.start()
