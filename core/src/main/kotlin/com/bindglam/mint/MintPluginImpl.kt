@@ -42,7 +42,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
         Mint.registerInstance(this)
 
-        server.pluginManager.registerEvents(PlayerJoinQuitListener, this)
+        this.server.pluginManager.registerEvents(PlayerJoinQuitListener, this)
 
         this.metrics = Metrics(this, Constants.BSTATS_PLUGIN_ID)
 
@@ -61,7 +61,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
                 logger.info("You are using the latest version of Mint!")
             }
         }
-        Bukkit.getAsyncScheduler().runNow(this) { _ -> checkUpdate() }
+        this.server.asyncScheduler.runNow(this) { _ -> checkUpdate() }
     }
 
     override fun onDisable() {
