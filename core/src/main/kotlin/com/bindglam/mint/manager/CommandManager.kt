@@ -88,7 +88,7 @@ object CommandManager : Managerial {
                 }
             })
         manager.command(manager.commandBuilder("mint")
-            .permission(Permission.of("mint.command.balance.get"))
+            .permission(Permission.of("mint.command.balance.logs.view"))
             .literal("balance")
             .literal("logs")
             .literal("view")
@@ -107,7 +107,7 @@ object CommandManager : Managerial {
                 }
             })
         manager.command(manager.commandBuilder("mint")
-            .permission(Permission.of("mint.command.balance.get"))
+            .permission(Permission.of("mint.command.balance.logs.clear"))
             .literal("balance")
             .literal("logs")
             .literal("clear")
