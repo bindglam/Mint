@@ -91,6 +91,7 @@ object CommandManager : Managerial {
             .permission(Permission.of("mint.command.balance.get"))
             .literal("balance")
             .literal("logs")
+            .literal("view")
             .required("target", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) } })
             .optional("page", IntegerParser.integerParser(1))
             .handler { ctx ->
@@ -100,10 +101,23 @@ object CommandManager : Managerial {
                 val account = AccountManagerImpl.getAccount(target.uniqueId)
                 account.logger().retrieveLogs(10, (page - 1) * 10).thenAccept { logs ->
                     logs.forEach { log ->
-                        ctx.sender().sendMessage(lang("command_money_balance_logs", log.timestamp(), log.operation(), log.currency().format(log.value()), log.currency().format(log.result().result()),
+                        ctx.sender().sendMessage(lang("command_money_balance_logs_view", log.timestamp(), log.operation(), log.currency().format(log.value()), log.currency().format(log.result().result()),
                             if(log.result().isSuccess) "<green>O" else "<red>X"))
                     }
                 }
+            })
+        manager.command(manager.commandBuilder("mint")
+            .permission(Permission.of("mint.command.balance.get"))
+            .literal("balance")
+            .literal("logs")
+            .literal("clear")
+            .required("target", StringParser.stringParser(), SuggestionProvider.blocking { _, _ -> Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) } })
+            .handler { ctx ->
+                val target = Bukkit.getOfflinePlayer(ctx.get<String>("target"))
+
+                val account = AccountManagerImpl.getAccount(target.uniqueId)
+                account.logger().clear()
+                ctx.sender().sendMessage(lang("command_money_balance_logs_clear", target.name ?: "Unknown"))
             })
     }
 }

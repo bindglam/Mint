@@ -55,4 +55,15 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
 
             return@supplyAsync list
         }
+
+    override fun clear() {
+        CompletableFuture.runAsync {
+            Mint.instance().database().getConnection { connection ->
+                connection.prepareStatement("DELETE FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ?").use { statement ->
+                    statement.setString(1, account.holder().toString())
+                    statement.executeUpdate()
+                }
+            }
+        }
+    }
 }

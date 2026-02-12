@@ -33,7 +33,7 @@ object VaultEconomy : AbstractEconomy() {
     override fun getBalance(playerName: String): Double {
         val player = Bukkit.getOfflinePlayer(playerName)
 
-        return AccountManagerImpl.getAccount(player.uniqueId).getBalance().get().toDouble()
+        return AccountManagerImpl.getAccount(player.uniqueId).balance.get().toDouble()
     }
 
     override fun getBalance(playerName: String, world: String): Double = getBalance(playerName)
