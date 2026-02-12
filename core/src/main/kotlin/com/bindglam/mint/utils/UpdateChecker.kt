@@ -1,6 +1,7 @@
 package com.bindglam.mint.utils
 
-import com.alibaba.fastjson2.JSON
+import com.google.gson.Gson
+import com.google.gson.JsonArray
 import org.semver4j.Semver
 import java.net.URI
 import java.net.http.HttpClient
@@ -22,9 +23,9 @@ class UpdateChecker(private val user: String, private val repositoryName: String
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
             if (response.statusCode() != 200) return false
 
-            val responseData = JSON.parseArray(response.body())
-            val latestReleaseData = responseData.getJSONObject(0)
-            val latestVersion = Semver(latestReleaseData.getString("tag_name"))
+            val responseData = Gson().fromJson(response.body(), JsonArray::class.java)
+            val latestReleaseData = responseData.get(0).asJsonObject
+            val latestVersion = Semver(latestReleaseData.get("tag_name").asString)
 
             return semver.isLowerThan(latestVersion)
         }
