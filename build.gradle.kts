@@ -50,6 +50,5 @@ tasks {
             relocate(pattern, "$groupString.shaded.$pattern")
         }
         prefix("kotlin")
-        prefix("org.bstats")
     }
 }
