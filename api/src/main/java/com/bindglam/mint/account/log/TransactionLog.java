@@ -15,7 +15,7 @@ import java.sql.Timestamp;
  * @param result
  * @param value
  */
-public record Log(
+public record TransactionLog(
         Timestamp timestamp,
         Operation operation,
         Currency currency,

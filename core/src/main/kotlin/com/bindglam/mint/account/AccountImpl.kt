@@ -1,7 +1,7 @@
 package com.bindglam.mint.account
 
 import com.bindglam.mint.Mint
-import com.bindglam.mint.account.log.Log
+import com.bindglam.mint.account.log.TransactionLog
 import com.bindglam.mint.account.log.TransactionLoggerImpl
 import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.currency.Currency
@@ -62,7 +62,7 @@ open class AccountImpl(private val holder: UUID) : Account {
                 Operation.Result.failure(getBalanceInternal(connection, currency))
         }
 
-        logger.log(Log(Timestamp.from(Instant.now()), operation, currency, operationResult, value))
+        logger.log(TransactionLog(Timestamp.from(Instant.now()), operation, currency, operationResult, value))
 
         return operationResult
     }

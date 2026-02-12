@@ -19,7 +19,7 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
         }
     }
 
-    fun log(log: Log) {
+    fun log(log: TransactionLog) {
         Mint.instance().database().getConnection { connection ->
             connection.prepareStatement("INSERT INTO ${AccountManagerImpl.LOGS_TABLE_NAME} (holder, timestamp, operation, currency, result_success, result_result, value) VALUES (?, ?, ?, ?, ?, ?, ?)").use { statement ->
                 statement.setString(1, account.holder().toString())
@@ -34,9 +34,9 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
         }
     }
 
-    override fun retrieveLogs(limit: @Range(from = 1, to = 99) Int, offset: Int): @Unmodifiable CompletableFuture<List<Log>> =
+    override fun retrieveLogs(limit: @Range(from = 1, to = 99) Int, offset: Int): @Unmodifiable CompletableFuture<List<TransactionLog>> =
         CompletableFuture.supplyAsync {
-            val list = arrayListOf<Log>()
+            val list = arrayListOf<TransactionLog>()
 
             Mint.instance().database().getConnection { connection ->
                 connection.prepareStatement("SELECT * FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ? ORDER BY timestamp ASC LIMIT $limit OFFSET $offset").use { statement ->
@@ -44,10 +44,18 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
 
                     statement.executeQuery().use { result ->
                         while(result.next()) {
-                            list.add(Log(result.getTimestamp("timestamp"), Operation.valueOf(result.getString("operation")),
-                                Mint.instance().currencyManager().registry().get(result.getString("currency")).orElse(null),
-                                Operation.Result(result.getBoolean("result_success"), result.getBigDecimal("result_result")),
-                                result.getBigDecimal("value")))
+                            list.add(
+                                TransactionLog(
+                                    result.getTimestamp("timestamp"), Operation.valueOf(result.getString("operation")),
+                                    Mint.instance().currencyManager().registry().get(result.getString("currency"))
+                                        .orElse(null),
+                                    Operation.Result(
+                                        result.getBoolean("result_success"),
+                                        result.getBigDecimal("result_result")
+                                    ),
+                                    result.getBigDecimal("value")
+                                )
+                            )
                         }
                     }
                 }
