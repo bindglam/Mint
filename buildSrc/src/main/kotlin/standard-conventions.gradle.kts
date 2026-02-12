@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.zaxxer:HikariCP:4.0.3")
+    compileOnly("com.zaxxer:HikariCP:7.0.2")
 }
 
 tasks {
