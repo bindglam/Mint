@@ -16,6 +16,8 @@ import java.util.concurrent.CompletableFuture;
  * @author bindglam
  */
 public interface Account {
+    void syncRedis(Currency currency);
+
     /**
      * Get the uuid of the holder
      */

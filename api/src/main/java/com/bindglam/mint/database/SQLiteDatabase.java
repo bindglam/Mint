@@ -15,7 +15,7 @@ import java.sql.SQLException;
  *
  * @author bindglam
  */
-public final class SQLiteDatabase implements Database {
+public final class SQLiteDatabase implements Database<Connection, SQLException> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteDatabase.class);
 
     private final MintConfiguration config;
@@ -53,7 +53,7 @@ public final class SQLiteDatabase implements Database {
     private void connect() {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:plugins/" + Constants.PLUGIN_NAME + "/database.db");
-            connection.setAutoCommit(config.database.sqlite.autoCommit.value());
+            connection.setAutoCommit(config.database.sql.sqlite.autoCommit.value());
         } catch (SQLException e) {
             throw new RuntimeException("Failed to connect to database", e);
         }
@@ -72,7 +72,7 @@ public final class SQLiteDatabase implements Database {
 
     private Connection ensureConnection() {
         try {
-            if(this.connection == null || this.connection.isValid(config.database.sqlite.validTimeout.value())) {
+            if(this.connection == null || this.connection.isValid(config.database.sql.sqlite.validTimeout.value())) {
                 this.disconnect();
                 this.connect();
             }
@@ -84,7 +84,7 @@ public final class SQLiteDatabase implements Database {
     }
 
     @Override
-    public void getConnection(ConnectionConsumer consumer) {
+    public void getResource(ResourceConsumer<Connection, SQLException> consumer) {
         try {
             consumer.accept(ensureConnection());
         } catch (SQLException e) {

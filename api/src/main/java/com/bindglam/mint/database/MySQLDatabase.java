@@ -12,7 +12,7 @@ import java.sql.SQLException;
  *
  * @author bindglam
  */
-public final class MySQLDatabase implements Database {
+public final class MySQLDatabase implements Database<Connection, SQLException> {
     private HikariDataSource dataSource;
 
     private final MintConfiguration config;
@@ -24,10 +24,10 @@ public final class MySQLDatabase implements Database {
     @Override
     public void start() {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:mysql://" + config.database.mysql.url.value() + "/" + config.database.mysql.database.value());
-        hikariConfig.setUsername(config.database.mysql.username.value());
-        hikariConfig.setPassword(config.database.mysql.password.value());
-        hikariConfig.setMaximumPoolSize(config.database.mysql.maxPoolSize.value());
+        hikariConfig.setJdbcUrl("jdbc:mysql://" + config.database.sql.mysql.url.value() + "/" + config.database.sql.mysql.database.value());
+        hikariConfig.setUsername(config.database.sql.mysql.username.value());
+        hikariConfig.setPassword(config.database.sql.mysql.password.value());
+        hikariConfig.setMaximumPoolSize(config.database.sql.mysql.maxPoolSize.value());
 
         this.dataSource = new HikariDataSource(hikariConfig);
     }
@@ -38,7 +38,7 @@ public final class MySQLDatabase implements Database {
     }
 
     @Override
-    public void getConnection(ConnectionConsumer consumer) {
+    public void getResource(ResourceConsumer<Connection, SQLException> consumer) {
         try(Connection connection = dataSource.getConnection()) {
             consumer.accept(connection);
         } catch (SQLException e) {

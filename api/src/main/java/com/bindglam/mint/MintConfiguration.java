@@ -3,7 +3,7 @@ package com.bindglam.mint;
 import com.bindglam.config.Configuration;
 import com.bindglam.config.Field;
 import com.bindglam.config.complex.EnumField;
-import com.bindglam.mint.database.DatabaseType;
+import com.bindglam.mint.database.SQLDatabaseType;
 
 import java.io.File;
 
@@ -12,21 +12,34 @@ public final class MintConfiguration extends Configuration {
 
     public final Database database = new Database();
     public final class Database {
-        public final Field<DatabaseType> type = createExtendedComplexField(() -> new EnumField<>("database.type", DatabaseType.SQLITE, DatabaseType.class));
+        public final SQL sql = new SQL();
+        public final class SQL {
+            public final Field<SQLDatabaseType> type = createExtendedComplexField(() -> new EnumField<>("database.sql.type", SQLDatabaseType.SQLITE, SQLDatabaseType.class));
 
-        public final SQLite sqlite = new SQLite();
-        public final class SQLite {
-            public final Field<Boolean> autoCommit = createPrimitiveField("database.SQLITE.auto-commit", true);
-            public final Field<Integer> validTimeout = createPrimitiveField("database.SQLITE.valid-timeout", 500);
+            public final SQLite sqlite = new SQLite();
+            public final class SQLite {
+                public final Field<Boolean> autoCommit = createPrimitiveField("database.sql.SQLITE.auto-commit", true);
+                public final Field<Integer> validTimeout = createPrimitiveField("database.sql.SQLITE.valid-timeout", 500);
+            }
+
+            public final MySQL mysql = new MySQL();
+            public final class MySQL {
+                public final Field<String> url = createPrimitiveField("database.sql.MYSQL.url", "localhost:3306");
+                public final Field<String> database = createPrimitiveField("database.sql.MYSQL.database", "minecraft");
+                public final Field<String> username = createPrimitiveField("database.sql.MYSQL.username", "root");
+                public final Field<String> password = createPrimitiveField("database.sql.MYSQL.password", "1234");
+                public final Field<Integer> maxPoolSize = createPrimitiveField("database.sql.MYSQL.max-pool-size", 10);
+            }
         }
 
-        public final MySQL mysql = new MySQL();
-        public final class MySQL {
-            public final Field<String> url = createPrimitiveField("database.MYSQL.url", "localhost:3306");
-            public final Field<String> database = createPrimitiveField("database.MYSQL.database", "minecraft");
-            public final Field<String> username = createPrimitiveField("database.MYSQL.username", "root");
-            public final Field<String> password = createPrimitiveField("database.MYSQL.password", "1234");
-            public final Field<Integer> maxPoolSize = createPrimitiveField("database.MYSQL.max-pool-size", 10);
+        public final Redis redis = new Redis();
+        public final class Redis {
+            public final Field<Boolean> enabled = createPrimitiveField("database.redis.enabled", false);
+            public final Field<String> host = createPrimitiveField("database.redis.host", "localhost");
+            public final Field<Integer> port = createPrimitiveField("database.redis.port", 6379);
+            public final Field<String> password = createPrimitiveField("database.redis.password", "1234");
+            public final Field<Integer> timeout = createPrimitiveField("database.redis.timeout", 1000);
+            public final Field<Integer> syncInterval = createPrimitiveField("database.redis.sync-interval", 60);
         }
     }
 

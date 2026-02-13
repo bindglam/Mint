@@ -20,7 +20,7 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
     }
 
     fun log(log: TransactionLog) {
-        Mint.instance().database().getConnection { connection ->
+        Mint.instance().databaseManager().sql().getResource { connection ->
             connection.prepareStatement("INSERT INTO ${AccountManagerImpl.LOGS_TABLE_NAME} (holder, timestamp, operation, currency, result_success, result_result, value) VALUES (?, ?, ?, ?, ?, ?, ?)").use { statement ->
                 statement.setString(1, account.holder().toString())
                 statement.setTimestamp(2, log.timestamp())
@@ -38,7 +38,7 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
         CompletableFuture.supplyAsync {
             val list = arrayListOf<TransactionLog>()
 
-            Mint.instance().database().getConnection { connection ->
+            Mint.instance().databaseManager().sql().getResource { connection ->
                 connection.prepareStatement("SELECT * FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ? ORDER BY timestamp ASC LIMIT $limit OFFSET $offset").use { statement ->
                     statement.setString(1, account.holder().toString())
 
@@ -66,7 +66,7 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
 
     override fun clear() {
         CompletableFuture.runAsync {
-            Mint.instance().database().getConnection { connection ->
+            Mint.instance().databaseManager().sql().getResource { connection ->
                 connection.prepareStatement("DELETE FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ?").use { statement ->
                     statement.setString(1, account.holder().toString())
                     statement.executeUpdate()
