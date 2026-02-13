@@ -1,5 +1,6 @@
 package com.bindglam.mint.manager
 
+import com.bindglam.mint.Mint
 import com.bindglam.mint.account.Account
 import com.bindglam.mint.account.AccountImpl
 import com.bindglam.mint.account.CachedAccount
@@ -22,16 +23,21 @@ object AccountManagerImpl : AccountManager {
             TransactionLoggerImpl.createTable(connection)
         }
 
-        if(context.config().database.redis.enabled.value()) {
+        if(context.config().database.redis.enabled.value() && context.config().database.redis.syncInterval.value() > 0) {
             context.plugin().plugin().server.asyncScheduler.runAtFixedRate(context.plugin().plugin(), { _ ->
-                context.plugin().databaseManager().redis()?.getResource { resource ->
-                    AccountImpl.syncRedis(resource)
-                }
+                syncAllRedis()
             }, 0L, context.config().database.redis.syncInterval.value().toLong(), TimeUnit.SECONDS)
         }
     }
 
     override fun end(context: Context) {
+        syncAllRedis()
+    }
+
+    private fun syncAllRedis() {
+        Mint.instance().databaseManager().redis()?.getResource { resource ->
+            AccountImpl.syncRedis(resource)
+        }
     }
 
     fun registerCachedAccount(uuid: UUID) {
