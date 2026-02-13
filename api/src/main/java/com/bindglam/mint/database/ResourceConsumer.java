@@ -3,8 +3,6 @@ package com.bindglam.mint.database;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
-
 /**
  * ResourceConsumer interface
  *
@@ -12,6 +10,6 @@ import java.sql.SQLException;
  */
 @ApiStatus.Internal
 @FunctionalInterface
-public interface ResourceConsumer<C> {
-    void accept(@NotNull C connection) throws SQLException;
+public interface ResourceConsumer<C, E extends Exception> {
+    void accept(@NotNull C connection) throws E;
 }

@@ -12,7 +12,7 @@ import java.sql.SQLException;
  *
  * @author bindglam
  */
-public final class MySQLDatabase implements Database<Connection> {
+public final class MySQLDatabase implements Database<Connection, SQLException> {
     private HikariDataSource dataSource;
 
     private final MintConfiguration config;
@@ -38,7 +38,7 @@ public final class MySQLDatabase implements Database<Connection> {
     }
 
     @Override
-    public void getResource(ResourceConsumer<Connection> consumer) {
+    public void getResource(ResourceConsumer<Connection, SQLException> consumer) {
         try(Connection connection = dataSource.getConnection()) {
             consumer.accept(connection);
         } catch (SQLException e) {

@@ -15,7 +15,7 @@ import java.sql.SQLException;
  *
  * @author bindglam
  */
-public final class SQLiteDatabase implements Database<Connection> {
+public final class SQLiteDatabase implements Database<Connection, SQLException> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteDatabase.class);
 
     private final MintConfiguration config;
@@ -84,7 +84,7 @@ public final class SQLiteDatabase implements Database<Connection> {
     }
 
     @Override
-    public void getResource(ResourceConsumer<Connection> consumer) {
+    public void getResource(ResourceConsumer<Connection, SQLException> consumer) {
         try {
             consumer.accept(ensureConnection());
         } catch (SQLException e) {
