@@ -32,8 +32,8 @@ public final class RedisDatabase implements Database<Jedis, JedisException> {
 
     @Override
     public void getResource(ResourceConsumer<Jedis, JedisException> consumer) {
-        try {
-            consumer.accept(pool.getResource());
+        try(Jedis resource = pool.getResource()) {
+            consumer.accept(resource);
         } catch (JedisException e) {
             throw new RuntimeException("Failed to proceed redis database connection", e);
         }

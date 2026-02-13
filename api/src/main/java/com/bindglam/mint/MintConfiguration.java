@@ -39,6 +39,7 @@ public final class MintConfiguration extends Configuration {
             public final Field<Integer> port = createPrimitiveField("database.redis.port", 6379);
             public final Field<String> password = createPrimitiveField("database.redis.password", "1234");
             public final Field<Integer> timeout = createPrimitiveField("database.redis.timeout", 1000);
+            public final Field<Integer> syncInterval = createPrimitiveField("database.redis.sync-interval", 60);
         }
     }
 
