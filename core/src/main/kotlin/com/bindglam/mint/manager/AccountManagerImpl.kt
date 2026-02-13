@@ -15,7 +15,7 @@ object AccountManagerImpl : AccountManager {
     private val cachedAccounts = hashMapOf<UUID, CachedAccount>()
 
     override fun start(context: Context) {
-        context.plugin().database().getConnection { connection ->
+        context.plugin().databaseManager().sql().getResource { connection ->
             AccountImpl.createTable(connection)
             TransactionLoggerImpl.createTable(connection)
         }

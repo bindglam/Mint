@@ -70,14 +70,14 @@ open class AccountImpl(private val holder: UUID) : Account {
     override fun getBalance(currency: Currency): CompletableFuture<BigDecimal> =
         CompletableFuture.supplyAsync {
             var balance = BigDecimal.ZERO
-            Mint.instance().database().getConnection { balance = getBalanceInternal(it, currency) }
+            Mint.instance().databaseManager().sql().getResource { balance = getBalanceInternal(it, currency) }
             return@supplyAsync balance
         }
 
     override fun modifyBalance(operation: Operation, currency: Currency, value: BigDecimal): CompletableFuture<Operation.Result> =
         CompletableFuture.supplyAsync {
             var result = Operation.Result.failure(BigDecimal.ZERO)
-            Mint.instance().database().getConnection { result = modifyBalanceInternal(it, operation, currency, value) }
+            Mint.instance().databaseManager().sql().getResource { result = modifyBalanceInternal(it, operation, currency, value) }
             return@supplyAsync result
         }
 

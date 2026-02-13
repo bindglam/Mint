@@ -23,7 +23,6 @@
             <option value="$PROJECT_DIR$/api" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/core" />
-            <option value="$PROJECT_DIR$/test-plugin" />
           </set>
         </option>
       </GradleProjectSettings>

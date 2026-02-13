@@ -1,18 +1,10 @@
 package com.bindglam.mint
 
-import com.bindglam.mint.database.Database
 import com.bindglam.mint.listeners.PlayerJoinQuitListener
-import com.bindglam.mint.manager.AccountManagerImpl
-import com.bindglam.mint.manager.CommandManager
-import com.bindglam.mint.manager.CompatibilityManager
-import com.bindglam.mint.manager.ContextImpl
-import com.bindglam.mint.manager.CurrencyManagerImpl
-import com.bindglam.mint.manager.LanguageManager
-import com.bindglam.mint.manager.Reloadable
+import com.bindglam.mint.manager.*
 import com.bindglam.mint.utils.Constants
 import com.bindglam.mint.utils.UpdateChecker
 import org.bstats.bukkit.Metrics
-import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
@@ -24,6 +16,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
     private val config = MintConfiguration(CONFIG_FILE)
 
     private val managers = listOf(
+        DatabaseManagerImpl,
         CommandManager,
         CompatibilityManager,
         LanguageManager,
@@ -31,7 +24,6 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
         AccountManagerImpl
     )
 
-    private lateinit var database: Database
     private lateinit var metrics: Metrics
 
     override fun onEnable() {
@@ -45,9 +37,6 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
         this.server.pluginManager.registerEvents(PlayerJoinQuitListener, this)
 
         this.metrics = Metrics(this, Constants.BSTATS_PLUGIN_ID)
-
-        this.database = this.config.database.type.value().create(this.config)
-        this.database.start()
 
         this.managers.forEach { it.start(ContextImpl(this)) }
 
@@ -66,8 +55,6 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
     override fun onDisable() {
         this.managers.forEach { it.end(ContextImpl(this)) }
-
-        this.database.stop()
     }
 
     override fun reload() {
@@ -79,7 +66,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
     }
 
     override fun config() = this.config
-    override fun database() = this.database
+    override fun databaseManager() = DatabaseManagerImpl
     override fun accountManager() = AccountManagerImpl
     override fun currencyManager() = CurrencyManagerImpl
 }

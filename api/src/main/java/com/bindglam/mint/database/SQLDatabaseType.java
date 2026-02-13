@@ -3,6 +3,7 @@ package com.bindglam.mint.database;
 import com.bindglam.mint.MintConfiguration;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Connection;
 import java.util.function.Function;
 
 /**
@@ -10,17 +11,17 @@ import java.util.function.Function;
  *
  * @author bindglam
  */
-public enum DatabaseType {
+public enum SQLDatabaseType {
     SQLITE(SQLiteDatabase::new),
     MYSQL(MySQLDatabase::new);
 
-    private final Function<MintConfiguration, Database> supplier;
+    private final Function<MintConfiguration, Database<Connection>> supplier;
 
-    DatabaseType(Function<MintConfiguration, Database> supplier) {
+    SQLDatabaseType(Function<MintConfiguration, Database<Connection>> supplier) {
         this.supplier = supplier;
     }
 
-    public @NotNull Database create(MintConfiguration config) {
+    public @NotNull Database<Connection> create(MintConfiguration config) {
         return supplier.apply(config);
     }
 }

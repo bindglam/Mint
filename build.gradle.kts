@@ -23,9 +23,9 @@ val runServerAction = Action<RunServer> {
     version(mcVersionString)
 
     downloadPlugins {
-        pluginJars(project("test-plugin").tasks.shadowJar.flatMap {
+        /*pluginJars(project("test-plugin").tasks.shadowJar.flatMap {
             it.archiveFile
-        })
+        })*/
         modrinth("vaultunlocked", "2.18.0")
         modrinth("placeholderapi", "2.12.1")
         //github("SkriptLang", "Skript", "2.12.2", "Skript-2.12.2.jar")

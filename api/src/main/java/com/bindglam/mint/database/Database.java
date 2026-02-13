@@ -1,14 +1,17 @@
 package com.bindglam.mint.database;
 
+import org.jetbrains.annotations.ApiStatus;
+
 /**
  * Database interface
  *
  * @author bindglam
  */
-public interface Database {
+@ApiStatus.Internal
+public interface Database<C> {
     void start();
 
     void stop();
 
-    void getConnection(ConnectionConsumer consumer);
+    void getResource(ResourceConsumer<C> consumer);
 }
