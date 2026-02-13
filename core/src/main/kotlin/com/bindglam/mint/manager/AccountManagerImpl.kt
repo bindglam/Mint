@@ -17,6 +17,8 @@ object AccountManagerImpl : AccountManager {
 
     private val cachedAccounts = hashMapOf<UUID, CachedAccount>()
 
+    override fun priority() = Managerial.Priority.of(-1, 1)
+
     override fun start(context: Context) {
         context.plugin().databaseManager().sql().getResource { connection ->
             AccountImpl.createTable(connection)

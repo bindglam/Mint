@@ -38,7 +38,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
         this.metrics = Metrics(this, Constants.BSTATS_PLUGIN_ID)
 
-        this.managers.forEach { it.start(ContextImpl(this)) }
+        this.managers.sortedByDescending { it.priority().start() }.forEach { it.start(ContextImpl(this)) }
 
         fun checkUpdate() {
             val checker = UpdateChecker("bindglam", "Mint")
@@ -54,7 +54,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
     }
 
     override fun onDisable() {
-        this.managers.forEach { it.end(ContextImpl(this)) }
+        this.managers.sortedBy { it.priority().end() }.forEach { it.end(ContextImpl(this)) }
     }
 
     override fun reload() {
@@ -62,7 +62,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
         this.config.load()
 
-        this.managers.filterIsInstance<Reloadable>().forEach { it.reload(ContextImpl(this)) }
+        this.managers.sortedBy { it.priority().start() }.filterIsInstance<Reloadable>().forEach { it.reload(ContextImpl(this)) }
 
         this.logger.info("Successfully reloaded!")
     }

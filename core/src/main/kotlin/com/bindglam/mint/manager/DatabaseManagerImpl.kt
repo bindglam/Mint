@@ -11,6 +11,8 @@ object DatabaseManagerImpl : DatabaseManager {
     private lateinit var sqlDatabase: Database<Connection, SQLException>
     private var redisDatabase: Database<Jedis, JedisException>? = null
 
+    override fun priority() = Managerial.Priority.of(Int.MAX_VALUE, Int.MIN_VALUE)
+
     override fun start(context: Context) {
         this.sqlDatabase = context.config().database.sql.type.value().create(context.config())
         this.redisDatabase = if(context.config().database.redis.enabled.value())
