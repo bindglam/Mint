@@ -31,6 +31,15 @@ public final class MintConfiguration extends Configuration {
                 public final Field<Integer> maxPoolSize = createPrimitiveField("database.sql.MYSQL.max-pool-size", 10);
             }
         }
+
+        public final Redis redis = new Redis();
+        public final class Redis {
+            public final Field<Boolean> enabled = createPrimitiveField("database.redis.enabled", false);
+            public final Field<String> host = createPrimitiveField("database.redis.host", "localhost");
+            public final Field<Integer> port = createPrimitiveField("database.redis.port", 6379);
+            public final Field<String> password = createPrimitiveField("database.redis.password", "1234");
+            public final Field<Integer> timeout = createPrimitiveField("database.redis.timeout", 1000);
+        }
     }
 
     public final Economy economy = new Economy();
