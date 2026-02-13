@@ -11,9 +11,10 @@ dependencies {
     compileOnly("com.github.bindglam:ConfigLib:1.0.0")
     compileOnly("org.incendo:cloud-paper:2.0.0-beta.14")
     //compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.14")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+    /*compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit")
-    }
+    }*/
+    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.3")
     compileOnly("org.semver4j:semver4j:6.0.0")
 }
 

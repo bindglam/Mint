@@ -1,101 +1,100 @@
 package com.bindglam.mint.compatibility.vault
 
+import com.bindglam.mint.Mint
 import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.manager.AccountManagerImpl
-import net.milkbowl.vault.economy.AbstractEconomy
-import net.milkbowl.vault.economy.EconomyResponse
-import org.bukkit.Bukkit
+import net.milkbowl.vault2.economy.Economy
+import net.milkbowl.vault2.economy.EconomyResponse
 import java.math.BigDecimal
-import java.text.DecimalFormat
-import kotlin.math.floor
+import java.util.Optional
+import java.util.UUID
 
-object VaultEconomy : AbstractEconomy() {
-    private val decimalFormat = DecimalFormat("###,###")
-
-    override fun isEnabled() = true
-
+object VaultEconomy : Economy {
+    override fun isEnabled(): Boolean = true
     override fun getName(): String = "GoldEngine"
-
     override fun hasBankSupport(): Boolean = false
-
+    override fun hasMultiCurrencySupport(): Boolean = true
     override fun fractionalDigits(): Int = 0
+    override fun format(amount: BigDecimal): String = format(amount, Mint.instance().currencyManager().defaultCurrency().id())
+    override fun format(amount: BigDecimal, currency: String): String = Mint.instance().currencyManager().registry().get(currency).orElseThrow().format(amount)
+    override fun hasCurrency(currency: String): Boolean = Mint.instance().currencyManager().registry().get(currency).isPresent
+    override fun getDefaultCurrency(): String = Mint.config().economy.currency.defaultCurrency.value()
+    override fun defaultCurrencyNamePlural(): String = Mint.instance().currencyManager().defaultCurrency().display().pluralName()
+    override fun defaultCurrencyNameSingular(): String = Mint.instance().currencyManager().defaultCurrency().display().singularName()
+    override fun currencies(): Collection<String> = Mint.instance().currencyManager().registry().entries().map { it.id() }
+    override fun createAccount(uuid: UUID, name: String): Boolean = true
+    override fun createAccount(uuid: UUID, name: String, worldName: String): Boolean = true
+    override fun getUUIDNameMap(): Map<UUID, String> = mapOf()
+    override fun getAccountName(uuid: UUID): Optional<String> = Optional.empty()
+    override fun hasAccount(uuid: UUID): Boolean = true
+    override fun hasAccount(uuid: UUID, worldName: String): Boolean = true
+    override fun renameAccount(uuid: UUID, name: String): Boolean = false
 
-    override fun format(amount: Double): String = decimalFormat.format(floor(amount))
+    override fun getBalance(pluginName: String, uuid: UUID): BigDecimal = AccountManagerImpl.getAccount(uuid).balance.get()
+    override fun getBalance(pluginName: String, uuid: UUID, world: String): BigDecimal = getBalance(pluginName, uuid)
+    override fun getBalance(pluginName: String, uuid: UUID, world: String, currency: String): BigDecimal =
+        AccountManagerImpl.getAccount(uuid).getBalance(Mint.instance().currencyManager().registry().get(currency).orElseThrow()).get()
 
-    override fun currencyNamePlural(): String = ""
+    override fun has(pluginName: String, uuid: UUID, amount: BigDecimal): Boolean = getBalance(pluginName, uuid) >= amount
+    override fun has(pluginName: String, uuid: UUID, worldName: String, amount: BigDecimal): Boolean = has(pluginName, uuid, amount)
+    override fun has(pluginName: String, uuid: UUID, worldName: String, currency: String, amount: BigDecimal): Boolean = getBalance(pluginName, uuid, worldName, currency) >= amount
 
-    override fun currencyNameSingular(): String = ""
+    override fun withdraw(pluginName: String, uuid: UUID, amount: BigDecimal): EconomyResponse {
+        val account = AccountManagerImpl.getAccount(uuid)
 
-    override fun hasAccount(playerName: String): Boolean = true
-
-    override fun hasAccount(playerName: String, worldName: String): Boolean = true
-
-    override fun getBalance(playerName: String): Double {
-        val player = Bukkit.getOfflinePlayer(playerName)
-
-        return AccountManagerImpl.getAccount(player.uniqueId).balance.get().toDouble()
-    }
-
-    override fun getBalance(playerName: String, world: String): Double = getBalance(playerName)
-
-    override fun has(playerName: String, amount: Double): Boolean = getBalance(playerName) >= amount
-
-    override fun has(playerName: String, worldName: String, amount: Double): Boolean = getBalance(playerName, worldName) >= amount
-
-    override fun withdrawPlayer(playerName: String, amount: Double): EconomyResponse {
-        val player = Bukkit.getOfflinePlayer(playerName)
-
-        val account = AccountManagerImpl.getAccount(player.uniqueId)
-        val result = account.modifyBalance(Operation.WITHDRAW, BigDecimal.valueOf(amount)).get()
+        val result = account.modifyBalance(Operation.WITHDRAW, amount).get()
         return if(result.isSuccess)
-            EconomyResponse(amount, result.result().toDouble(), EconomyResponse.ResponseType.SUCCESS, null)
+            EconomyResponse(amount, result.result(), EconomyResponse.ResponseType.SUCCESS, null)
         else
-            EconomyResponse(amount, result.result().toDouble(), EconomyResponse.ResponseType.FAILURE, null)
+            EconomyResponse(amount, result.result(), EconomyResponse.ResponseType.FAILURE, null)
     }
+    override fun withdraw(pluginName: String, uuid: UUID, worldName: String, amount: BigDecimal): EconomyResponse = withdraw(pluginName, uuid, amount)
+    override fun withdraw(pluginName: String, uuid: UUID, worldName: String, currency: String, amount: BigDecimal): EconomyResponse {
+        val account = AccountManagerImpl.getAccount(uuid)
 
-    override fun withdrawPlayer(playerName: String, worldName: String, amount: Double): EconomyResponse = withdrawPlayer(playerName, amount)
-
-    override fun depositPlayer(playerName: String, amount: Double): EconomyResponse {
-        val player = Bukkit.getOfflinePlayer(playerName)
-
-        val account = AccountManagerImpl.getAccount(player.uniqueId)
-        val result = account.modifyBalance(Operation.DEPOSIT, BigDecimal.valueOf(amount)).get()
+        val result = account.modifyBalance(Operation.WITHDRAW, Mint.instance().currencyManager().registry().get(currency).orElseThrow(), amount).get()
         return if(result.isSuccess)
-            EconomyResponse(amount, result.result().toDouble(), EconomyResponse.ResponseType.SUCCESS, null)
+            EconomyResponse(amount, result.result(), EconomyResponse.ResponseType.SUCCESS, null)
         else
-            EconomyResponse(amount, result.result().toDouble(), EconomyResponse.ResponseType.FAILURE, null)
+            EconomyResponse(amount, result.result(), EconomyResponse.ResponseType.FAILURE, null)
     }
 
-    override fun depositPlayer(playerName: String, worldName: String, amount: Double): EconomyResponse = depositPlayer(playerName, amount)
+    override fun deposit(pluginName: String, uuid: UUID, amount: BigDecimal): EconomyResponse {
+        val account = AccountManagerImpl.getAccount(uuid)
 
-    override fun createBank(name: String, player: String): EconomyResponse =
-        EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented")
+        val result = account.modifyBalance(Operation.DEPOSIT, amount).get()
+        return if(result.isSuccess)
+            EconomyResponse(amount, result.result(), EconomyResponse.ResponseType.SUCCESS, null)
+        else
+            EconomyResponse(amount, result.result(), EconomyResponse.ResponseType.FAILURE, null)
+    }
+    override fun deposit(pluginName: String, uuid: UUID, worldName: String, amount: BigDecimal): EconomyResponse = deposit(pluginName, uuid, amount)
+    override fun deposit(pluginName: String, uuid: UUID, worldName: String, currency: String, amount: BigDecimal): EconomyResponse {
+        val account = AccountManagerImpl.getAccount(uuid)
 
-    override fun deleteBank(name: String): EconomyResponse =
-        EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented")
+        val result = account.modifyBalance(Operation.DEPOSIT, Mint.instance().currencyManager().registry().get(currency).orElseThrow(), amount).get()
+        return if(result.isSuccess)
+            EconomyResponse(amount, result.result(), EconomyResponse.ResponseType.SUCCESS, null)
+        else
+            EconomyResponse(amount, result.result(), EconomyResponse.ResponseType.FAILURE, null)
+    }
 
-    override fun bankBalance(name: String): EconomyResponse =
-        EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented")
-
-    override fun bankHas(name: String, amount: Double): EconomyResponse =
-        EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented")
-
-    override fun bankWithdraw(name: String, amount: Double): EconomyResponse =
-        EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented")
-
-    override fun bankDeposit(name: String, amount: Double): EconomyResponse =
-        EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented")
-
-    override fun isBankOwner(name: String, playerName: String): EconomyResponse =
-        EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented")
-
-    override fun isBankMember(name: String, playerName: String): EconomyResponse =
-        EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented")
-
-    override fun getBanks(): List<String> =
-        listOf()
-
-    override fun createPlayerAccount(playerName: String): Boolean = true
-
-    override fun createPlayerAccount(playerName: String, worldName: String): Boolean = createPlayerAccount(playerName)
+    override fun createBank(pluginName: String, name: String, uuid: UUID): Boolean = false
+    override fun deleteBank(pluginName: String, uuid: UUID): Boolean = false
+    override fun getBankUUIDNameMap(): Map<UUID, String> = mapOf()
+    override fun getBankAccountName(uuid: UUID): String = ""
+    override fun hasBankAccount(uuid: UUID): Boolean = false
+    override fun bankSupportsCurrency(uuid: UUID, currency: String): Boolean = false
+    override fun renameBankAccount(pluginName: String, uuid: UUID, name: String): Boolean = false
+    override fun bankBalance(pluginName: String, uuid: UUID): BigDecimal = BigDecimal.ZERO
+    override fun bankBalance(pluginName: String, uuid: UUID, currency: String): BigDecimal = BigDecimal.ZERO
+    override fun bankHas(pluginName: String, uuid: UUID, amount: BigDecimal): Boolean = false
+    override fun bankHas(pluginName: String, uuid: UUID, currency: String, amount: BigDecimal): Boolean = false
+    override fun bankWithdraw(pluginName: String, uuid: UUID, amount: BigDecimal): EconomyResponse = EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, null)
+    override fun bankWithdraw(pluginName: String, uuid: UUID, currency: String, amount: BigDecimal): EconomyResponse = EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, null)
+    override fun bankDeposit(pluginName: String, uuid: UUID, amount: BigDecimal): EconomyResponse = EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, null)
+    override fun bankDeposit(pluginName: String, uuid: UUID, currency: String, amount: BigDecimal): EconomyResponse = EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, null)
+    override fun isBankOwner(uuid: UUID?, bankUUID: UUID?): Boolean = false
+    override fun isBankMember(uuid: UUID?, bankUUID: UUID?): Boolean = false
+    override fun getBanks(): Collection<UUID> = listOf()
 }
