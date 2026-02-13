@@ -26,13 +26,14 @@ open class AccountImpl(private val holder: UUID) : Account {
 
         fun syncRedis(jedis: Jedis) {
             if(!jedis.exists("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty")) return
-            jedis.smembers("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty").map { UUID.fromString(it) }.forEach { holder ->
+            val holders = jedis.smembers("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty").map { UUID.fromString(it) }
+            jedis.del("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty")
+            holders.forEach { holder ->
                 val account = AccountManagerImpl.getAccount(holder)
                 CurrencyManagerImpl.registry().entries().forEach { currency ->
                     account.syncRedis(currency)
                 }
             }
-            jedis.del("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty")
         }
     }
 
