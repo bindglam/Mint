@@ -5,6 +5,7 @@ import com.bindglam.mint.account.log.TransactionLog
 import com.bindglam.mint.account.log.TransactionLoggerImpl
 import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.currency.Currency
+import com.bindglam.mint.events.AccountOperationEvent
 import com.bindglam.mint.manager.AccountManagerImpl
 import com.bindglam.mint.manager.CurrencyManagerImpl
 import redis.clients.jedis.Jedis
@@ -115,6 +116,8 @@ open class AccountImpl(private val holder: UUID) : Account {
         }
 
         logger.log(TransactionLog(Timestamp.from(Instant.now()), operation, currency, result, value))
+
+        AccountOperationEvent(this, operation, value, result).callEvent()
 
         return result
     }
