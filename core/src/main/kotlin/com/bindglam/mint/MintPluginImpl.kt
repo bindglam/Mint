@@ -60,6 +60,8 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
     override fun reload() {
         this.logger.info("Reloading...")
 
+        this.config.load()
+
         this.managers.filterIsInstance<Reloadable>().forEach { it.reload(ContextImpl(this)) }
 
         this.logger.info("Successfully reloaded!")
