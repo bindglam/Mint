@@ -3,8 +3,6 @@ package com.bindglam.mint.manager
 import com.bindglam.mint.Mint
 import com.bindglam.mint.account.Account
 import com.bindglam.mint.account.AccountImpl
-import com.bindglam.mint.account.CachedAccount
-import com.bindglam.mint.account.CachedAccountImpl
 import com.bindglam.mint.account.log.TransactionLoggerImpl
 import com.bindglam.mint.utils.Constants
 import com.bindglam.mint.utils.plugin
@@ -14,8 +12,6 @@ import java.util.concurrent.TimeUnit
 object AccountManagerImpl : AccountManager {
     const val ACCOUNTS_TABLE_NAME = "${Constants.PLUGIN_ID}_accounts"
     const val LOGS_TABLE_NAME = "${Constants.PLUGIN_ID}_logs"
-
-    private val cachedAccounts = hashMapOf<UUID, CachedAccount>()
 
     override fun priority() = Managerial.Priority.of(-1, 1)
 
@@ -42,16 +38,5 @@ object AccountManagerImpl : AccountManager {
         }
     }
 
-    fun registerCachedAccount(uuid: UUID) {
-        cachedAccounts[uuid] = CachedAccountImpl(uuid).also { account ->
-            CurrencyManagerImpl.registry().entries().forEach { account.getBalance(it).thenAccept {} }
-        }
-    }
-
-    fun unregisterCachedAccount(uuid: UUID) {
-        cachedAccounts.remove(uuid)
-    }
-
-    override fun getAccount(uuid: UUID): Account = getCachedAccount(uuid) ?: AccountImpl(uuid)
-    override fun getCachedAccount(uuid: UUID): CachedAccount? = cachedAccounts[uuid]
+    override fun getAccount(uuid: UUID): Account = AccountImpl(uuid)
 }

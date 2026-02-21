@@ -1,9 +1,7 @@
 package com.bindglam.mint.manager;
 
 import com.bindglam.mint.account.Account;
-import com.bindglam.mint.account.CachedAccount;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -19,6 +17,4 @@ public interface AccountManager extends Managerial {
      * @param uuid uuid of the account
      */
     @NotNull Account getAccount(UUID uuid);
-
-    @Nullable CachedAccount getCachedAccount(UUID uuid);
 }
