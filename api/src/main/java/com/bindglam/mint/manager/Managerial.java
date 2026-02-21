@@ -1,5 +1,6 @@
 package com.bindglam.mint.manager;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -8,12 +9,15 @@ import org.jetbrains.annotations.NotNull;
  * @author bindglam
  */
 public interface Managerial {
+    @ApiStatus.Internal
     default void start(@NotNull Context context) {
     }
 
+    @ApiStatus.Internal
     default void end(@NotNull Context context) {
     }
 
+    @ApiStatus.Internal
     default @NotNull Priority priority() {
         return Priority.empty();
     }
