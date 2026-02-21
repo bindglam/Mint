@@ -1,6 +1,5 @@
 package com.bindglam.mint
 
-import com.bindglam.mint.listeners.PlayerJoinQuitListener
 import com.bindglam.mint.manager.*
 import com.bindglam.mint.utils.Constants
 import com.bindglam.mint.utils.UpdateChecker
@@ -33,8 +32,6 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
         this.config.load()
 
         Mint.registerInstance(this)
-
-        this.server.pluginManager.registerEvents(PlayerJoinQuitListener, this)
 
         this.metrics = Metrics(this, Constants.BSTATS_PLUGIN_ID)
 
