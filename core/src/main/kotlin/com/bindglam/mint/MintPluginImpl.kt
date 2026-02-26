@@ -53,7 +53,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
     }
 
     override fun onDisable() {
-        this.managers.sortedBy { it.priority().end() }.forEach { it.end(ContextImpl(this)) }
+        this.managers.sortedByDescending { it.priority().end() }.forEach { it.end(ContextImpl(this)) }
     }
 
     override fun reload() {
@@ -61,7 +61,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
         this.config.load()
 
-        this.managers.sortedBy { it.priority().start() }.filterIsInstance<Reloadable>().forEach { it.reload(ContextImpl(this)) }
+        this.managers.sortedByDescending { it.priority().start() }.filterIsInstance<Reloadable>().forEach { it.reload(ContextImpl(this)) }
 
         this.logger.info("Successfully reloaded!")
     }
