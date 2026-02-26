@@ -18,7 +18,7 @@ import org.incendo.cloud.suggestion.SuggestionProvider
 import java.math.BigDecimal
 
 object CommandManager : Managerial {
-    override fun start(context: Context) {
+    override fun preload(context: Context) {
         val manager = LegacyPaperCommandManager(
             context.plugin().plugin(),
             ExecutionCoordinator.simpleCoordinator(),

@@ -10,6 +10,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Managerial {
     @ApiStatus.Internal
+    default void preload(@NotNull Context context) {
+    }
+
+    @ApiStatus.Internal
     default void start(@NotNull Context context) {
     }
 

@@ -35,6 +35,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
         this.metrics = Metrics(this, Constants.BSTATS_PLUGIN_ID)
 
+        this.managers.sortedByDescending { it.priority().start() }.forEach { it.preload(ContextImpl(this)) }
         server.asyncScheduler.runNow(this) { _ ->
             this.managers.sortedByDescending { it.priority().start() }.forEach { it.start(ContextImpl(this)) }
         }
