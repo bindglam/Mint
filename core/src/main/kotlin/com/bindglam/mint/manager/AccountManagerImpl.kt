@@ -9,7 +9,7 @@ import com.bindglam.mint.utils.plugin
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-object AccountManagerImpl : AccountManager {
+object AccountManagerImpl : AccountManager, Managerial {
     const val ACCOUNTS_TABLE_NAME = "${Constants.PLUGIN_ID}_accounts"
     const val LOGS_TABLE_NAME = "${Constants.PLUGIN_ID}_logs"
 

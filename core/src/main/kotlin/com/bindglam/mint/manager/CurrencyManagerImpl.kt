@@ -10,7 +10,7 @@ import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-object CurrencyManagerImpl : CurrencyManager {
+object CurrencyManagerImpl : CurrencyManager, Managerial, Reloadable {
     private val currenciesFolder = File("plugins/${Constants.PLUGIN_NAME}/currencies")
     private val defaultCurrencies = listOf("won")
 

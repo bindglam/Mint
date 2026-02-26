@@ -10,7 +10,7 @@ import java.util.UUID;
  *
  * @author bindglam
  */
-public interface AccountManager extends Managerial {
+public interface AccountManager {
     /**
      * Get account by uuid
      *

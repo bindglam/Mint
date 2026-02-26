@@ -35,9 +35,9 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
         this.metrics = Metrics(this, Constants.BSTATS_PLUGIN_ID)
 
-        this.managers.sortedByDescending { it.priority().start() }.forEach { it.preload(ContextImpl(this)) }
+        this.managers.sortedByDescending { it.priority().start }.forEach { it.preload(Context(this)) }
         server.asyncScheduler.runNow(this) { _ ->
-            this.managers.sortedByDescending { it.priority().start() }.forEach { it.start(ContextImpl(this)) }
+            this.managers.sortedByDescending { it.priority().start }.forEach { it.start(Context(this)) }
         }
 
         fun checkUpdate() {
@@ -54,7 +54,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
     }
 
     override fun onDisable() {
-        this.managers.sortedByDescending { it.priority().end() }.forEach { it.end(ContextImpl(this)) }
+        this.managers.sortedByDescending { it.priority().end }.forEach { it.end(Context(this)) }
     }
 
     override fun reload() {
@@ -62,7 +62,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
         this.config.load()
 
-        this.managers.sortedByDescending { it.priority().start() }.filterIsInstance<Reloadable>().forEach { it.reload(ContextImpl(this)) }
+        this.managers.sortedByDescending { it.priority().start }.filterIsInstance<Reloadable>().forEach { it.reload(Context(this)) }
 
         this.logger.info("Successfully reloaded!")
     }

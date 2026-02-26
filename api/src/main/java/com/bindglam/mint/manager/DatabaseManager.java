@@ -11,7 +11,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @ApiStatus.Internal
-public interface DatabaseManager extends Managerial {
+public interface DatabaseManager {
     @NotNull Database<Connection, SQLException> sql();
 
     @Nullable Database<Jedis, JedisException> redis();

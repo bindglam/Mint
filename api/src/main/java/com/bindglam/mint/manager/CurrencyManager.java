@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author bindglam
  */
-public interface CurrencyManager extends Managerial, Reloadable {
+public interface CurrencyManager {
     /**
      * Get the currency registry
      */

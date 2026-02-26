@@ -7,7 +7,7 @@ import redis.clients.jedis.exceptions.JedisException
 import java.sql.Connection
 import java.sql.SQLException
 
-object DatabaseManagerImpl : DatabaseManager {
+object DatabaseManagerImpl : DatabaseManager, Managerial {
     private lateinit var sqlDatabase: Database<Connection, SQLException>
     private var redisDatabase: Database<Jedis, JedisException>? = null
 
