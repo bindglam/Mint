@@ -12,6 +12,7 @@ repositories {
     maven("https://repo.codemc.org/repository/maven-public/")
     maven("https://jitpack.io")
     maven("https://repo.codemc.io/repository/creatorfromhell/")
+    maven("https://repo.extendedclip.com/releases/")
 }
 
 dependencies {
