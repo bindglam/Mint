@@ -10,7 +10,7 @@ object CompatibilityManager : Managerial {
 
     private val enabledCompatibilities = arrayListOf<Compatibility>()
 
-    override fun start(context: Context) {
+    override fun preload(context: Context) {
         enabledCompatibilities.addAll(compatibilities
             .filter { compat -> Bukkit.getPluginManager().isPluginEnabled(compat.requiredPlugin) })
         enabledCompatibilities.forEach { it.start() }
