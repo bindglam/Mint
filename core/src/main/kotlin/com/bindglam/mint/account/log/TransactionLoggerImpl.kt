@@ -65,13 +65,11 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
             return@supplyAsync list
         }
 
-    override fun clear() {
-        CompletableFuture.runAsync {
-            DatabaseManagerImpl.sql().getResource { connection ->
-                connection.prepareStatement("DELETE FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ?").use { statement ->
-                    statement.setString(1, account.holder().toString())
-                    statement.executeUpdate()
-                }
+    override fun clear(): CompletableFuture<Void> = CompletableFuture.runAsync {
+        DatabaseManagerImpl.sql().getResource { connection ->
+            connection.prepareStatement("DELETE FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ?").use { statement ->
+                statement.setString(1, account.holder().toString())
+                statement.executeUpdate()
             }
         }
     }

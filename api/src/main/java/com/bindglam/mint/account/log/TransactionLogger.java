@@ -23,7 +23,7 @@ public interface TransactionLogger {
     /**
      * Clears all transaction logs for this account.
      */
-    void clear();
+    CompletableFuture<Void> clear();
 
     /**
      * Defines pagination parameters for log retrieval.
