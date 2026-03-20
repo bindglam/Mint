@@ -33,7 +33,7 @@ object AccountManagerImpl : AccountManager, Managerial {
 
     private fun syncAllRedis() {
         DatabaseManagerImpl.redis()?.getResource { resource ->
-            AccountImpl.syncRedis(resource)
+            AccountImpl.persistRedisData(resource)
         }
     }
 

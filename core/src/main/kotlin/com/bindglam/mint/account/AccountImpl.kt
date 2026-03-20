@@ -25,14 +25,14 @@ open class AccountImpl(private val holder: UUID) : Account {
             }
         }
 
-        fun syncRedis(jedis: Jedis) {
+        fun persistRedisData(jedis: Jedis) {
             if(!jedis.exists("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty")) return
             val holders = jedis.smembers("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty").map { UUID.fromString(it) }
             jedis.del("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty")
             holders.forEach { holder ->
                 val account = AccountManagerImpl.getAccount(holder)
                 CurrencyManagerImpl.registry().entries().forEach { currency ->
-                    account.syncRedis(currency)
+                    account.persistRedisData(currency)
                 }
             }
         }
@@ -122,7 +122,7 @@ open class AccountImpl(private val holder: UUID) : Account {
         return result
     }
 
-    override fun syncRedis(currency: Currency) {
+    override fun persistRedisData(currency: Currency) {
         if(DatabaseManagerImpl.redis() != null) {
             var balance = BigDecimal.ZERO
 
