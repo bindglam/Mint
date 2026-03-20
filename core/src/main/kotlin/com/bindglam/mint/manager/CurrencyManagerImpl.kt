@@ -4,14 +4,14 @@ import com.bindglam.mint.Mint
 import com.bindglam.mint.currency.Currency
 import com.bindglam.mint.currency.CurrencyDisplay
 import com.bindglam.mint.currency.CurrencyRegistryImpl
-import com.bindglam.mint.utils.Constants
+import com.bindglam.mint.utils.PLUGIN_NAME
 import com.bindglam.mint.utils.plugin
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
 object CurrencyManagerImpl : CurrencyManager, Managerial, Reloadable {
-    private val currenciesFolder = File("plugins/${Constants.PLUGIN_NAME}/currencies")
+    private val currenciesFolder = File("plugins/${PLUGIN_NAME}/currencies")
     private val defaultCurrencies = listOf("won")
 
     private val registry = CurrencyRegistryImpl()

@@ -1,7 +1,8 @@
 package com.bindglam.mint
 
 import com.bindglam.mint.manager.*
-import com.bindglam.mint.utils.Constants
+import com.bindglam.mint.utils.BSTATS_PLUGIN_ID
+import com.bindglam.mint.utils.PLUGIN_NAME
 import com.bindglam.mint.utils.UpdateChecker
 import org.bstats.bukkit.Metrics
 import org.bukkit.plugin.java.JavaPlugin
@@ -9,7 +10,7 @@ import java.io.File
 
 class MintPluginImpl : JavaPlugin(), MintPlugin {
     companion object {
-        private val CONFIG_FILE =  File("plugins/${Constants.PLUGIN_NAME}", "config.yml")
+        private val CONFIG_FILE =  File("plugins/${PLUGIN_NAME}", "config.yml")
     }
 
     val mintConfig = MintConfiguration(CONFIG_FILE)
@@ -33,7 +34,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
         Mint.registerInstance(this)
 
-        this.metrics = Metrics(this, Constants.BSTATS_PLUGIN_ID)
+        this.metrics = Metrics(this, BSTATS_PLUGIN_ID)
 
         this.managers.sortedByDescending { it.priority().start }.forEach { it.preload(Context(this)) }
         server.asyncScheduler.runNow(this) { _ ->

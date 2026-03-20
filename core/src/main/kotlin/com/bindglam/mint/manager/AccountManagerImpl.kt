@@ -3,14 +3,14 @@ package com.bindglam.mint.manager
 import com.bindglam.mint.account.Account
 import com.bindglam.mint.account.AccountImpl
 import com.bindglam.mint.account.log.TransactionLoggerImpl
-import com.bindglam.mint.utils.Constants
+import com.bindglam.mint.utils.PLUGIN_ID
 import com.bindglam.mint.utils.plugin
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 object AccountManagerImpl : AccountManager, Managerial {
-    const val ACCOUNTS_TABLE_NAME = "${Constants.PLUGIN_ID}_accounts"
-    const val LOGS_TABLE_NAME = "${Constants.PLUGIN_ID}_logs"
+    const val ACCOUNTS_TABLE_NAME = "${PLUGIN_ID}_accounts"
+    const val LOGS_TABLE_NAME = "${PLUGIN_ID}_logs"
 
     override fun priority() = Managerial.Priority.of(-1, 1)
 
