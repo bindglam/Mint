@@ -9,6 +9,7 @@ import com.bindglam.mint.manager.AccountManagerImpl
 import com.bindglam.mint.manager.CurrencyManagerImpl
 import com.bindglam.mint.manager.DatabaseManagerImpl
 import redis.clients.jedis.Jedis
+import redis.clients.jedis.params.SetParams
 import java.math.BigDecimal
 import java.sql.Connection
 import java.sql.Timestamp
@@ -51,7 +52,7 @@ open class AccountImpl(private val holder: UUID) : Account {
 
     protected fun setBalanceInRedis(jedis: Jedis, currency: Currency, value: BigDecimal) {
         val key = "${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:uuid_${holder}:currency_${currency.id()}"
-        jedis.set(key, value.toString())
+        jedis.set(key, value.toString(), SetParams.setParams().ex(120L))
         jedis.sadd("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty", holder.toString())
     }
 
