@@ -29,12 +29,14 @@ open class AccountImpl(private val holder: UUID) : Account {
             if(!jedis.exists("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty")) return
             val holders = jedis.smembers("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty").map { UUID.fromString(it) }
             jedis.del("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty")
-            holders.forEach { holder ->
-                val account = AccountManagerImpl.getAccount(holder)
+
+            val tasks = arrayListOf<CompletableFuture<Void>>()
+            holders.map { AccountManagerImpl.getAccount(it) }.forEach { account ->
                 CurrencyManagerImpl.registry().entries().forEach { currency ->
-                    account.persistRedisData(currency)
+                    tasks.add(account.persistRedisData(currency))
                 }
             }
+            CompletableFuture.allOf(*tasks.toTypedArray()).join()
         }
     }
 
@@ -122,7 +124,7 @@ open class AccountImpl(private val holder: UUID) : Account {
         return result
     }
 
-    override fun persistRedisData(currency: Currency) {
+    override fun persistRedisData(currency: Currency): CompletableFuture<Void> = CompletableFuture.runAsync {
         if(DatabaseManagerImpl.redis() != null) {
             var balance = BigDecimal.ZERO
 

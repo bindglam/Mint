@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
  * @author bindglam
  */
 public interface Account {
-    void persistRedisData(Currency currency);
+    CompletableFuture<Void> persistRedisData(Currency currency);
 
     /**
      * Get the uuid of the holder
