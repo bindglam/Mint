@@ -1,9 +1,9 @@
 package com.bindglam.mint.manager
 
-import com.bindglam.database.Database
-import com.bindglam.database.MySQLDatabase
-import com.bindglam.database.RedisDatabase
-import com.bindglam.database.SQLiteDatabase
+import io.github.bindglam.database.Database
+import io.github.bindglam.database.MySQLDatabase
+import io.github.bindglam.database.RedisDatabase
+import io.github.bindglam.database.SQLiteDatabase
 import com.bindglam.mint.MintConfiguration
 import com.bindglam.mint.utils.dataFolder
 import redis.clients.jedis.Jedis
