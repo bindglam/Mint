@@ -27,17 +27,23 @@ open class AccountImpl(private val holder: UUID) : Account {
         }
 
         fun persistRedisData(jedis: Jedis) {
-            if(!jedis.exists("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty")) return
-            val holders = jedis.smembers("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty").map { UUID.fromString(it) }
-            jedis.del("${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty")
+            val dirtyKey = "${AccountManagerImpl.ACCOUNTS_TABLE_NAME}:dirty"
 
-            val tasks = arrayListOf<CompletableFuture<Void>>()
-            holders.map { AccountManagerImpl.getAccount(it) }.forEach { account ->
-                CurrencyManagerImpl.registry().entries().forEach { currency ->
-                    tasks.add(account.persistRedisData(currency))
+            // Process dirty accounts one at a time
+            while (true) {
+                // Atomic: Pop one UUID from dirty set
+                val holder = UUID.fromString(jedis.spop(dirtyKey) ?: break)
+
+                try {
+                    val account = AccountManagerImpl.getAccount(holder) as AccountImpl
+
+                    CurrencyManagerImpl.registry().entries().forEach { currency ->
+                        account.persistRedisData(jedis, currency)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
-            CompletableFuture.allOf(*tasks.toTypedArray()).join()
         }
     }
 
@@ -79,66 +85,70 @@ open class AccountImpl(private val holder: UUID) : Account {
     }
 
     protected open fun getBalanceInternal(currency: Currency): BigDecimal {
-        var result: BigDecimal? = null
-
-        DatabaseManagerImpl.redis()?.getResource { resource ->
-            result = getBalanceInRedis(resource, currency)
-        }
-
-        if(result == null) {
-            DatabaseManagerImpl.sql().getResource { connection ->
-                result = getBalanceInSQL(connection, currency)
-            }
+        return AccountLocks.withLock(holder) {
+            var result: BigDecimal? = null
 
             DatabaseManagerImpl.redis()?.getResource { resource ->
-                setBalanceInRedis(resource, currency, result ?: BigDecimal.ZERO)
+                result = getBalanceInRedis(resource, currency)
             }
-        }
 
-        return result ?: BigDecimal.ZERO
+            if (result == null) {
+                DatabaseManagerImpl.sql().getResource { connection ->
+                    result = getBalanceInSQL(connection, currency)
+                }
+
+                DatabaseManagerImpl.redis()?.getResource { resource ->
+                    setBalanceInRedis(resource, currency, result ?: BigDecimal.ZERO)
+                }
+            }
+
+            result ?: BigDecimal.ZERO
+        }
     }
 
     protected open fun modifyBalanceInternal(operation: Operation, currency: Currency, value: BigDecimal): Operation.Result {
-        val result = operation.operate(getBalanceInternal(currency), value)
+        return AccountLocks.withLock(holder) {
+            val result = operation.operate(getBalanceInternal(currency), value)
 
-        if (result.isSuccess) {
-            if(DatabaseManagerImpl.redis() != null) {
-                DatabaseManagerImpl.redis()?.getResource { resource ->
-                    setBalanceInRedis(resource, currency, result.result)
-                }
-            } else {
-                DatabaseManagerImpl.sql().getResource { connection ->
-                    connection.prepareStatement("UPDATE ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} SET balance = ? WHERE holder = ? AND currency = ?").use { statement ->
-                        statement.setBigDecimal(1, result.result)
-                        statement.setString(2, holder.toString())
-                        statement.setString(3, currency.id())
-                        statement.executeUpdate()
+            if (result.isSuccess) {
+                if (DatabaseManagerImpl.redis() != null) {
+                    DatabaseManagerImpl.redis()?.getResource { resource ->
+                        setBalanceInRedis(resource, currency, result.result)
+                    }
+                } else {
+                    DatabaseManagerImpl.sql().getResource { connection ->
+                        connection.prepareStatement("UPDATE ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} SET balance = ? WHERE holder = ? AND currency = ?")
+                            .use { statement ->
+                                statement.setBigDecimal(1, result.result)
+                                statement.setString(2, holder.toString())
+                                statement.setString(3, currency.id())
+                                statement.executeUpdate()
+                            }
                     }
                 }
             }
+
+            logger.log(TransactionLog(Timestamp.from(Instant.now()), operation, currency, result, value))
+
+            AccountOperationEvent(this, operation, value, result).callEvent()
+
+            result
         }
-
-        logger.log(TransactionLog(Timestamp.from(Instant.now()), operation, currency, result, value))
-
-        AccountOperationEvent(this, operation, value, result).callEvent()
-
-        return result
     }
 
-    override fun persistRedisData(currency: Currency): CompletableFuture<Void> = CompletableFuture.runAsync {
+    private fun persistRedisData(jedis: Jedis, currency: Currency) {
         if(DatabaseManagerImpl.redis() != null) {
-            var balance = BigDecimal.ZERO
+            AccountLocks.withLock(holder) {
+                val balance = getBalanceInRedis(jedis, currency) ?: BigDecimal.ZERO
 
-            DatabaseManagerImpl.redis()?.getResource { resource ->
-                balance = getBalanceInRedis(resource, currency) ?: BigDecimal.ZERO
-            }
-
-            DatabaseManagerImpl.sql().getResource { connection ->
-                connection.prepareStatement("UPDATE ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} SET balance = ? WHERE holder = ? AND currency = ?").use { statement ->
-                    statement.setBigDecimal(1, balance)
-                    statement.setString(2, holder.toString())
-                    statement.setString(3, currency.id())
-                    statement.executeUpdate()
+                DatabaseManagerImpl.sql().getResource { connection ->
+                    connection.prepareStatement("UPDATE ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} SET balance = ? WHERE holder = ? AND currency = ?")
+                        .use { statement ->
+                            statement.setBigDecimal(1, balance)
+                            statement.setString(2, holder.toString())
+                            statement.setString(3, currency.id())
+                            statement.executeUpdate()
+                        }
                 }
             }
         }

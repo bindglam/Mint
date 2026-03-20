@@ -17,15 +17,6 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface Account {
     /**
-     * Persists Redis cache data to the SQL database for a specific currency.
-     * This is an internal method used for periodic cache synchronization.
-     *
-     * @param currency The currency to persist
-     * @return A CompletableFuture that completes when the data is persisted
-     */
-    CompletableFuture<Void> persistRedisData(Currency currency);
-
-    /**
      * Returns the UUID of the account holder.
      *
      * @return The holder's UUID
