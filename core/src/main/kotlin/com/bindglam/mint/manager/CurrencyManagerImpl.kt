@@ -9,6 +9,7 @@ import com.bindglam.mint.utils.plugin
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
+import java.io.IOException
 
 object CurrencyManagerImpl : CurrencyManager, Managerial, Reloadable {
     private val currenciesFolder = File("plugins/${PLUGIN_NAME}/currencies")
@@ -24,7 +25,12 @@ object CurrencyManagerImpl : CurrencyManager, Managerial, Reloadable {
                 val file = File(currenciesFolder, "$name.yml")
                 if(file.exists()) return@forEach
 
-                file.createNewFile()
+                try {
+                    file.createNewFile()
+                } catch (_: IOException) {
+                    context.logger().warning("Failed to create default currency file $name.yml")
+                    return@forEach
+                }
                 context.plugin().plugin().getResource("currencies/$name.yml")?.copyTo(file.outputStream())
             }
         }
@@ -59,5 +65,6 @@ object CurrencyManagerImpl : CurrencyManager, Managerial, Reloadable {
     }
 
     override fun registry() = registry
-    override fun defaultCurrency() = registry[Mint.instance().plugin().mintConfig.economy.currency.defaultCurrency.value()].orElseThrow()!!
+    override fun defaultCurrency() = registry[Mint.instance().plugin().mintConfig.economy.currency.defaultCurrency.value()]
+        .orElseThrow { NoSuchElementException("Default currency not found") }!!
 }
