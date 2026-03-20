@@ -12,7 +12,7 @@ import java.util.UUID
 
 object VaultEconomy : Economy {
     override fun isEnabled(): Boolean = true
-    override fun getName(): String = "GoldEngine"
+    override fun getName(): String = Mint.instance().plugin().name
     override fun hasBankSupport(): Boolean = false
     override fun hasMultiCurrencySupport(): Boolean = true
     override fun fractionalDigits(): Int = 0

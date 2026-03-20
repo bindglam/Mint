@@ -3,6 +3,7 @@ package com.bindglam.mint.compatibility.vault
 import com.bindglam.mint.Mint
 import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.manager.AccountManagerImpl
+import com.bindglam.mint.utils.plugin
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
@@ -11,7 +12,7 @@ import java.math.BigDecimal
 
 object LegacyVaultEconomy : Economy {
     override fun isEnabled() = true
-    override fun getName(): String = "GoldEngine"
+    override fun getName(): String = Mint.instance().plugin().name
     override fun hasBankSupport(): Boolean = false
     override fun fractionalDigits(): Int = 0
     override fun format(amount: Double): String = Mint.instance().currencyManager().defaultCurrency().format(BigDecimal.valueOf(amount))
