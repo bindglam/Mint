@@ -22,7 +22,8 @@ open class AccountImpl(private val holder: UUID) : Account {
         fun createTable(connection: Connection) {
             connection.createStatement().use { statement ->
                 statement.execute("CREATE TABLE IF NOT EXISTS ${AccountManagerImpl.ACCOUNTS_TABLE_NAME}" +
-                        "(holder VARCHAR(36), currency VARCHAR(32), balance DECIMAL(65, 5))")
+                        "(holder VARCHAR(36) NOT NULL, currency VARCHAR(32) NOT NULL, balance DECIMAL(65, 5) NOT NULL," +
+                        "PRIMARY KEY (holder, currency))")
             }
         }
 
