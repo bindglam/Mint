@@ -2,7 +2,6 @@ package com.bindglam.mint;
 
 import com.bindglam.mint.manager.AccountManager;
 import com.bindglam.mint.manager.CurrencyManager;
-import com.bindglam.mint.manager.DatabaseManager;
 
 /**
  * GoldEnginePlugin interface
@@ -11,10 +10,6 @@ import com.bindglam.mint.manager.DatabaseManager;
  */
 public interface MintPlugin {
     void reload();
-
-    MintConfiguration config();
-
-    DatabaseManager databaseManager();
 
     AccountManager accountManager();
 

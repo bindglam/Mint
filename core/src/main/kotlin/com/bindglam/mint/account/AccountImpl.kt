@@ -1,6 +1,5 @@
 package com.bindglam.mint.account
 
-import com.bindglam.mint.Mint
 import com.bindglam.mint.account.log.TransactionLog
 import com.bindglam.mint.account.log.TransactionLoggerImpl
 import com.bindglam.mint.account.operation.Operation
@@ -8,6 +7,7 @@ import com.bindglam.mint.currency.Currency
 import com.bindglam.mint.events.AccountOperationEvent
 import com.bindglam.mint.manager.AccountManagerImpl
 import com.bindglam.mint.manager.CurrencyManagerImpl
+import com.bindglam.mint.manager.DatabaseManagerImpl
 import redis.clients.jedis.Jedis
 import java.math.BigDecimal
 import java.sql.Connection
@@ -78,16 +78,16 @@ open class AccountImpl(private val holder: UUID) : Account {
     protected open fun getBalanceInternal(currency: Currency): BigDecimal {
         var result: BigDecimal? = null
 
-        Mint.instance().databaseManager().redis()?.getResource { resource ->
+        DatabaseManagerImpl.redis()?.getResource { resource ->
             result = getBalanceInRedis(resource, currency)
         }
 
         if(result == null) {
-            Mint.instance().databaseManager().sql().getResource { connection ->
+            DatabaseManagerImpl.sql().getResource { connection ->
                 result = getBalanceInSQL(connection, currency)
             }
 
-            Mint.instance().databaseManager().redis()?.getResource { resource ->
+            DatabaseManagerImpl.redis()?.getResource { resource ->
                 setBalanceInRedis(resource, currency, result ?: BigDecimal.ZERO)
             }
         }
@@ -99,12 +99,12 @@ open class AccountImpl(private val holder: UUID) : Account {
         val result = operation.operate(getBalanceInternal(currency), value)
 
         if (result.isSuccess) {
-            if(Mint.instance().databaseManager().redis() != null) {
-                Mint.instance().databaseManager().redis()?.getResource { resource ->
+            if(DatabaseManagerImpl.redis() != null) {
+                DatabaseManagerImpl.redis()?.getResource { resource ->
                     setBalanceInRedis(resource, currency, result.result)
                 }
             } else {
-                Mint.instance().databaseManager().sql().getResource { connection ->
+                DatabaseManagerImpl.sql().getResource { connection ->
                     connection.prepareStatement("UPDATE ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} SET balance = ? WHERE holder = ? AND currency = ?").use { statement ->
                         statement.setBigDecimal(1, result.result)
                         statement.setString(2, holder.toString())
@@ -123,14 +123,14 @@ open class AccountImpl(private val holder: UUID) : Account {
     }
 
     override fun syncRedis(currency: Currency) {
-        if(Mint.instance().databaseManager().redis() != null) {
+        if(DatabaseManagerImpl.redis() != null) {
             var balance = BigDecimal.ZERO
 
-            Mint.instance().databaseManager().redis()?.getResource { resource ->
+            DatabaseManagerImpl.redis()?.getResource { resource ->
                 balance = getBalanceInRedis(resource, currency) ?: BigDecimal.ZERO
             }
 
-            Mint.instance().databaseManager().sql().getResource { connection ->
+            DatabaseManagerImpl.sql().getResource { connection ->
                 connection.prepareStatement("UPDATE ${AccountManagerImpl.ACCOUNTS_TABLE_NAME} SET balance = ? WHERE holder = ? AND currency = ?").use { statement ->
                     statement.setBigDecimal(1, balance)
                     statement.setString(2, holder.toString())

@@ -59,5 +59,5 @@ object CurrencyManagerImpl : CurrencyManager, Managerial, Reloadable {
     }
 
     override fun registry() = registry
-    override fun defaultCurrency() = registry[Mint.config().economy.currency.defaultCurrency.value()].orElseThrow()!!
+    override fun defaultCurrency() = registry[Mint.instance().plugin().mintConfig.economy.currency.defaultCurrency.value()].orElseThrow()!!
 }

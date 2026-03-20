@@ -3,6 +3,7 @@ package com.bindglam.mint.compatibility.vault
 import com.bindglam.mint.Mint
 import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.manager.AccountManagerImpl
+import com.bindglam.mint.utils.plugin
 import net.milkbowl.vault2.economy.Economy
 import net.milkbowl.vault2.economy.EconomyResponse
 import java.math.BigDecimal
@@ -18,7 +19,7 @@ object VaultEconomy : Economy {
     override fun format(amount: BigDecimal): String = format(amount, Mint.instance().currencyManager().defaultCurrency().id())
     override fun format(amount: BigDecimal, currency: String): String = Mint.instance().currencyManager().registry().get(currency).orElseThrow().format(amount)
     override fun hasCurrency(currency: String): Boolean = Mint.instance().currencyManager().registry().get(currency).isPresent
-    override fun getDefaultCurrency(): String = Mint.config().economy.currency.defaultCurrency.value()
+    override fun getDefaultCurrency(): String = Mint.instance().plugin().mintConfig.economy.currency.defaultCurrency.value()
     override fun defaultCurrencyNamePlural(): String = Mint.instance().currencyManager().defaultCurrency().display().pluralName()
     override fun defaultCurrencyNameSingular(): String = Mint.instance().currencyManager().defaultCurrency().display().singularName()
     override fun currencies(): Collection<String> = Mint.instance().currencyManager().registry().entries().map { it.id() }

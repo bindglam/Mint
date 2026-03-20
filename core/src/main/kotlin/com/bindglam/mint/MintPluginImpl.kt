@@ -12,7 +12,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
         private val CONFIG_FILE =  File("plugins/${Constants.PLUGIN_NAME}", "config.yml")
     }
 
-    private val config = MintConfiguration(CONFIG_FILE)
+    val mintConfig = MintConfiguration(CONFIG_FILE)
 
     private val managers = listOf(
         DatabaseManagerImpl,
@@ -29,7 +29,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
         if(!CONFIG_FILE.parentFile.exists())
             CONFIG_FILE.parentFile.mkdirs()
 
-        this.config.load()
+        this.mintConfig.load()
 
         Mint.registerInstance(this)
 
@@ -60,15 +60,13 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
     override fun reload() {
         this.logger.info("Reloading...")
 
-        this.config.load()
+        this.mintConfig.load()
 
         this.managers.sortedByDescending { it.priority().start }.filterIsInstance<Reloadable>().forEach { it.reload(Context(this)) }
 
         this.logger.info("Successfully reloaded!")
     }
 
-    override fun config() = this.config
-    override fun databaseManager() = DatabaseManagerImpl
     override fun accountManager() = AccountManagerImpl
     override fun currencyManager() = CurrencyManagerImpl
 }

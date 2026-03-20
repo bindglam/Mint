@@ -21,10 +21,6 @@ public final class Mint {
         return Mint.instance;
     }
 
-    public static @NotNull MintConfiguration config() {
-        return instance().config();
-    }
-
     @ApiStatus.Internal
     static void registerInstance(@NotNull MintPlugin instance) {
         if(Mint.instance != null)

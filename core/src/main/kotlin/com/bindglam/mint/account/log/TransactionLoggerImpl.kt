@@ -1,9 +1,10 @@
 package com.bindglam.mint.account.log
 
-import com.bindglam.mint.Mint
 import com.bindglam.mint.account.AccountImpl
 import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.manager.AccountManagerImpl
+import com.bindglam.mint.manager.CurrencyManagerImpl
+import com.bindglam.mint.manager.DatabaseManagerImpl
 import org.jetbrains.annotations.Range
 import org.jetbrains.annotations.Unmodifiable
 import java.sql.Connection
@@ -20,7 +21,7 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
     }
 
     fun log(log: TransactionLog) {
-        Mint.instance().databaseManager().sql().getResource { connection ->
+        DatabaseManagerImpl.sql().getResource { connection ->
             connection.prepareStatement("INSERT INTO ${AccountManagerImpl.LOGS_TABLE_NAME} (holder, timestamp, operation, currency, result_success, result_result, value) VALUES (?, ?, ?, ?, ?, ?, ?)").use { statement ->
                 statement.setString(1, account.holder().toString())
                 statement.setTimestamp(2, log.timestamp())
@@ -38,7 +39,7 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
         CompletableFuture.supplyAsync {
             val list = arrayListOf<TransactionLog>()
 
-            Mint.instance().databaseManager().sql().getResource { connection ->
+            DatabaseManagerImpl.sql().getResource { connection ->
                 connection.prepareStatement("SELECT * FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ? ORDER BY timestamp ASC LIMIT $limit OFFSET $offset").use { statement ->
                     statement.setString(1, account.holder().toString())
 
@@ -47,7 +48,7 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
                             list.add(
                                 TransactionLog(
                                     result.getTimestamp("timestamp"), Operation.valueOf(result.getString("operation")),
-                                    Mint.instance().currencyManager().registry().get(result.getString("currency"))
+                                    CurrencyManagerImpl.registry().get(result.getString("currency"))
                                         .orElse(null),
                                     Operation.Result(
                                         result.getBoolean("result_success"),
@@ -66,7 +67,7 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
 
     override fun clear() {
         CompletableFuture.runAsync {
-            Mint.instance().databaseManager().sql().getResource { connection ->
+            DatabaseManagerImpl.sql().getResource { connection ->
                 connection.prepareStatement("DELETE FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ?").use { statement ->
                     statement.setString(1, account.holder().toString())
                     statement.executeUpdate()

@@ -1,6 +1,5 @@
 package com.bindglam.mint.manager
 
-import com.bindglam.mint.Mint
 import com.bindglam.mint.account.Account
 import com.bindglam.mint.account.AccountImpl
 import com.bindglam.mint.account.log.TransactionLoggerImpl
@@ -16,7 +15,7 @@ object AccountManagerImpl : AccountManager, Managerial {
     override fun priority() = Managerial.Priority.of(-1, 1)
 
     override fun start(context: Context) {
-        context.plugin().databaseManager().sql().getResource { connection ->
+        DatabaseManagerImpl.sql().getResource { connection ->
             AccountImpl.createTable(connection)
             TransactionLoggerImpl.createTable(connection)
         }
@@ -33,7 +32,7 @@ object AccountManagerImpl : AccountManager, Managerial {
     }
 
     private fun syncAllRedis() {
-        Mint.instance().databaseManager().redis()?.getResource { resource ->
+        DatabaseManagerImpl.redis()?.getResource { resource ->
             AccountImpl.syncRedis(resource)
         }
     }
