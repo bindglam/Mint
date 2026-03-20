@@ -35,12 +35,12 @@ class TransactionLoggerImpl(val account: AccountImpl) : TransactionLogger {
         }
     }
 
-    override fun retrieveLogs(limit: @Range(from = 1, to = 99) Int, offset: Int): @Unmodifiable CompletableFuture<List<TransactionLog>> =
+    override fun retrieveLogs(pagination: TransactionLogger.Pagination): @Unmodifiable CompletableFuture<List<TransactionLog>> =
         CompletableFuture.supplyAsync {
             val list = arrayListOf<TransactionLog>()
 
             DatabaseManagerImpl.sql().getResource { connection ->
-                connection.prepareStatement("SELECT * FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ? ORDER BY timestamp ASC LIMIT $limit OFFSET $offset").use { statement ->
+                connection.prepareStatement("SELECT * FROM ${AccountManagerImpl.LOGS_TABLE_NAME} WHERE holder = ? ORDER BY timestamp ASC LIMIT ${pagination.size()} OFFSET ${pagination.size()*pagination.page()}").use { statement ->
                     statement.setString(1, account.holder().toString())
 
                     statement.executeQuery().use { result ->

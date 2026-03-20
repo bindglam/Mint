@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.zaxxer:HikariCP:7.0.2")
-    compileOnly("redis.clients:jedis:7.1.0")
+    compileOnly("org.projectlombok:lombok:1.18.44")
+    annotationProcessor("org.projectlombok:lombok:1.18.44")
 }
 
 tasks {

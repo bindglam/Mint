@@ -1,5 +1,6 @@
 package com.bindglam.mint.account.log;
 
+import lombok.Builder;
 import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -13,12 +14,15 @@ public interface TransactionLogger {
     /**
      * Retrieve logs
      *
-     * @param limit limit
-     * @param offset offset
+     * @param pagination pagination
      * @return logs
      */
     @Unmodifiable
-    CompletableFuture<List<TransactionLog>> retrieveLogs(@Range(from = 1L, to = 99L) int limit, int offset);
+    CompletableFuture<List<TransactionLog>> retrieveLogs(Pagination pagination);
 
     void clear();
+
+    @Builder
+    record Pagination(int page, int size) {
+    }
 }

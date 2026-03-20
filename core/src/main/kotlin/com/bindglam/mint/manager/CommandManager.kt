@@ -1,6 +1,7 @@
 package com.bindglam.mint.manager
 
 import com.bindglam.mint.Mint
+import com.bindglam.mint.account.log.TransactionLogger
 import com.bindglam.mint.account.operation.Operation
 import com.bindglam.mint.utils.lang
 import com.bindglam.mint.utils.plugin
@@ -99,7 +100,7 @@ object CommandManager : Managerial {
                 val page = ctx.getOrDefault("page", 1)
 
                 val account = AccountManagerImpl.getAccount(target.uniqueId)
-                account.logger().retrieveLogs(10, (page - 1) * 10).thenAccept { logs ->
+                account.logger().retrieveLogs(TransactionLogger.Pagination.builder().page(page - 1).size(10).build()).thenAccept { logs ->
                     logs.forEach { log ->
                         ctx.sender().sendMessage(lang("command_money_balance_logs_view", log.timestamp(), log.operation(), log.currency().format(log.value()), log.currency().format(log.result().result()),
                             if(log.result().isSuccess) "<green>O" else "<red>X"))
