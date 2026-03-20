@@ -7,13 +7,13 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 /**
- * Log record
+ * Represents a single transaction log entry recording a balance modification.
  *
- * @param timestamp
- * @param operation
- * @param currency
- * @param result
- * @param value
+ * @param timestamp The time when the transaction occurred
+ * @param operation The type of operation performed (DEPOSIT or WITHDRAW)
+ * @param currency The currency involved in the transaction
+ * @param result   The result of the operation, including success status and new balance
+ * @param value    The original value that was applied in the operation
  */
 public record TransactionLog(
         Timestamp timestamp,

@@ -5,18 +5,22 @@ import com.bindglam.mint.currency.CurrencyRegistry;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * CurrencyManager interface
+ * Manages currency definitions and provides access to the currency registry.
  *
  * @author bindglam
  */
 public interface CurrencyManager {
     /**
-     * Get the currency registry
+     * Returns the currency registry containing all registered currencies.
+     *
+     * @return The currency registry
      */
     @NotNull CurrencyRegistry registry();
 
     /**
-     * Get the default currency
+     * Returns the default currency used for operations when none is specified.
+     *
+     * @return The default currency
      */
     @NotNull Currency defaultCurrency();
 }

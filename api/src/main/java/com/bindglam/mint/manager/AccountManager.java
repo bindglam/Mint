@@ -6,15 +6,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 /**
- * AccountManager interface
+ * Provides access to player accounts for economic operations.
  *
  * @author bindglam
  */
 public interface AccountManager {
     /**
-     * Get account by uuid
+     * Retrieves the account associated with the specified player UUID.
      *
-     * @param uuid uuid of the account
+     * @param uuid The unique identifier of the player
+     * @return The account for the given UUID
      */
     @NotNull Account getAccount(UUID uuid);
 }

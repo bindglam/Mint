@@ -8,20 +8,29 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * TransactionLogger interface
+ * Manages transaction logs for an account, providing retrieval and clearing capabilities.
  */
 public interface TransactionLogger {
     /**
-     * Retrieve logs
+     * Retrieves transaction logs with pagination support.
      *
-     * @param pagination pagination
-     * @return logs
+     * @param pagination The pagination parameters specifying page and size
+     * @return A CompletableFuture containing the list of transaction logs
      */
     @Unmodifiable
     CompletableFuture<List<TransactionLog>> retrieveLogs(Pagination pagination);
 
+    /**
+     * Clears all transaction logs for this account.
+     */
     void clear();
 
+    /**
+     * Defines pagination parameters for log retrieval.
+     *
+     * @param page The zero-based page number
+     * @param size The number of entries per page
+     */
     @Builder
     record Pagination(int page, int size) {
     }
