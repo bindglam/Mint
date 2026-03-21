@@ -2,6 +2,9 @@ package com.bindglam.mint.compatibility.vault
 
 import com.bindglam.mint.Mint
 import com.bindglam.mint.compatibility.Compatibility
+import com.bindglam.mint.compatibility.printCompatIssue
+import com.bindglam.mint.manager.Context
+import com.bindglam.mint.manager.DatabaseManagerImpl
 import com.bindglam.mint.utils.logger
 import com.bindglam.mint.utils.plugin
 import org.bukkit.Bukkit
@@ -10,7 +13,7 @@ import org.bukkit.plugin.ServicePriority
 object VaultCompatibility : Compatibility {
     override val requiredPlugin = "Vault"
 
-    override fun start() {
+    override fun start(context: Context) {
         if(!isNewVault()) {
             logger().info("Legacy Vault hooked!")
 
@@ -20,9 +23,13 @@ object VaultCompatibility : Compatibility {
 
             Bukkit.getServicesManager().register(net.milkbowl.vault2.economy.Economy::class.java, VaultEconomy, Mint.instance().plugin(), ServicePriority.Normal)
         }
+
+        if(context.config().database.sql.type.value() == DatabaseManagerImpl.SQLDatabaseType.MYSQL || context.config().database.redis.enabled.value()) {
+            printCompatIssue()
+        }
     }
 
-    override fun end() {
+    override fun end(context: Context) {
         Bukkit.getServicesManager().unregister(if(isNewVault()) VaultEconomy else LegacyVaultEconomy)
     }
 

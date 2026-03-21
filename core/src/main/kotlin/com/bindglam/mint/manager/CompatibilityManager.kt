@@ -10,14 +10,16 @@ object CompatibilityManager : Managerial {
 
     private val enabledCompatibilities = arrayListOf<Compatibility>()
 
+    override fun priority() = Managerial.Priority.of(Int.MIN_VALUE, Int.MAX_VALUE)
+
     override fun preload(context: Context) {
         enabledCompatibilities.addAll(compatibilities
             .filter { compat -> Bukkit.getPluginManager().isPluginEnabled(compat.requiredPlugin) })
-        enabledCompatibilities.forEach { it.start() }
+        enabledCompatibilities.forEach { it.start(context) }
     }
 
     override fun end(context: Context) {
-        enabledCompatibilities.forEach { it.end() }
+        enabledCompatibilities.forEach { it.end(context) }
         enabledCompatibilities.clear()
     }
 }
