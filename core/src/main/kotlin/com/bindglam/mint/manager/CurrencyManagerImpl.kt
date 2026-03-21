@@ -37,7 +37,7 @@ object CurrencyManagerImpl : CurrencyManager, Managerial, Reloadable {
 
         fun loadCurrency(config: ConfigurationSection): Currency {
             fun loadDisplay(config: ConfigurationSection): CurrencyDisplay {
-                return CurrencyDisplay(config.getString("plural-name"), config.getString("singular-name"))
+                return CurrencyDisplay(config.getString("display-name") ?: error("Display name not found"), config.getString("plural-name") ?: error("Plural name not found"), config.getString("singular-name") ?: error("Singular name not found"))
             }
 
             return Currency(config.name, loadDisplay(config.getConfigurationSection("display")!!))
