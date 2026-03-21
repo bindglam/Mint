@@ -42,7 +42,7 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
         }
 
         fun checkUpdate() {
-            val checker = UpdateChecker("bindglam", "Mint")
+            val checker = UpdateChecker("bindglam", PLUGIN_NAME)
 
             if(checker.check(this.pluginMeta.version)) {
                 logger.info("A new version of Mint is available!")
