@@ -6,6 +6,7 @@ import io.github.bindglam.database.RedisDatabase
 import io.github.bindglam.database.SQLiteDatabase
 import com.bindglam.mint.MintConfiguration
 import com.bindglam.mint.utils.dataFolder
+import io.github.bindglam.database.H2Database
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.exceptions.JedisException
 import java.io.File
@@ -37,7 +38,9 @@ object DatabaseManagerImpl : Managerial {
     fun redis(): Database<Jedis, JedisException>? = redisDatabase
 
     enum class SQLDatabaseType(val supplier: (MintConfiguration) -> Database<Connection, SQLException>) {
-        SQLITE({ config -> SQLiteDatabase(File(dataFolder(), "database.db"), config.database.sql.sqlite.autoCommit.value(), config.database.sql.sqlite.validTimeout.value()) }),
-        MYSQL({ config -> MySQLDatabase(config.database.sql.mysql.url.value(), config.database.sql.mysql.database.value(), config.database.sql.mysql.username.value(), config.database.sql.mysql.password.value(), config.database.sql.mysql.maxPoolSize.value()) });
+        SQLITE({ config -> SQLiteDatabase(File(dataFolder(), "database.sqlite.db"), config.database.sql.autoCommit.value(), config.database.sql.validTimeout.value()) }),
+        H2({ config -> H2Database(File(dataFolder(), "database.h2"), config.database.sql.autoCommit.value(), config.database.sql.validTimeout.value()) }),
+        MYSQL({ config -> MySQLDatabase(config.database.sql.mysql.url.value(), config.database.sql.mysql.database.value(), config.database.sql.mysql.username.value(), config.database.sql.mysql.password.value(),
+            config.database.sql.autoCommit.value(), config.database.sql.validTimeout.value(), config.database.sql.mysql.maxPoolSize.value()) });
     }
 }

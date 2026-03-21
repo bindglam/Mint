@@ -32,7 +32,7 @@ class MintPluginLoader : PluginLoader {
         resolver.addRepository(RemoteRepository.Builder("jitpack", "default", "https://jitpack.io").build())
 
         resolver.addDependency(Dependency(DefaultArtifact("com.github.bindglam:ConfigLib:1.0.0"), null))
-        resolver.addDependency(Dependency(DefaultArtifact("com.github.bindglam.DatabaseLib:DatabaseLib:2.0.0"), null))
+        resolver.addDependency(Dependency(DefaultArtifact("com.github.bindglam.DatabaseLib:DatabaseLib:2.1.1"), null))
 
         return resolver
     }

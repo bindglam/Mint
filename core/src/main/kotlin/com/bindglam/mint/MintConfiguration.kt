@@ -15,11 +15,8 @@ class MintConfiguration(file: File) : Configuration(file) {
         inner class SQL {
             val type = createExtendedComplexField(Supplier { EnumField("database.sql.type", DatabaseManagerImpl.SQLDatabaseType.SQLITE, DatabaseManagerImpl.SQLDatabaseType::class.java) })!!
 
-            val sqlite = SQLite()
-            inner class SQLite {
-                val autoCommit = createPrimitiveField("database.sql.SQLITE.auto-commit", true)!!
-                val validTimeout = createPrimitiveField("database.sql.SQLITE.valid-timeout", 500)!!
-            }
+            val autoCommit = createPrimitiveField("database.sql.SQLITE.auto-commit", true)!!
+            val validTimeout = createPrimitiveField("database.sql.SQLITE.valid-timeout", 500)!!
 
             val mysql = MySQL()
             inner class MySQL {
