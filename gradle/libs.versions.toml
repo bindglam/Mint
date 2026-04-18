@@ -2,7 +2,7 @@
 kotlin = "2.3.20"
 
 resourceFactory = "1.3.1"
-runTask = "2.3.1"
+runTask = "3.0.2"
 shadow = "9.4.1"
 
 minotaur = "2.9.0"
