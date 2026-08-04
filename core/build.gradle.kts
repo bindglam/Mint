@@ -26,7 +26,7 @@ paperPluginYaml {
     version = rootProject.version.toString()
     main = "$group.MintPluginImpl"
     loader = "$group.MintPluginLoader"
-    apiVersion = "1.20"
+    apiVersion = "26.1"
     author = "Bindglam"
     foliaSupported = true
     dependencies {
