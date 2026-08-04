@@ -49,7 +49,7 @@ tasks {
         archiveClassifier = ""
 
         dependencies {
-            exclude(dependency("org.jetbrains:annotations:13.0")); exclude(dependency("org.jetbrains:annotations:23.0.0")); exclude(dependency("org.jetbrains:annotations:26.0.2"))
+            exclude(dependency("org.jetbrains:annotations"))
         }
 
         fun prefix(pattern: String) {
