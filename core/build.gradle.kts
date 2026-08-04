@@ -3,6 +3,7 @@ import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 plugins {
     id("paper-conventions")
     alias(libs.plugins.resourceFactory.paper)
+    kotlin("plugin.lombok")
 }
 
 dependencies {
