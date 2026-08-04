@@ -16,7 +16,7 @@ dependencies {
     /*compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit")
     }*/
-    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.3")
+    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.20")
     compileOnly("me.clip:placeholderapi:2.12.3")
     compileOnly("org.semver4j:semver4j:6.0.0")
 }
