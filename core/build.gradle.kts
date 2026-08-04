@@ -11,11 +11,6 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.1.0")
     compileOnly("com.github.bindglam:ConfigLib:1.0.0")
     compileOnly("com.github.bindglam.DatabaseLib:DatabaseLib:2.1.1")
-    compileOnly("org.incendo:cloud-paper:2.0.0")
-    //compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.14")
-    /*compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
-        exclude("org.bukkit")
-    }*/
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.20")
     compileOnly("me.clip:placeholderapi:2.12.3")
     compileOnly("org.semver4j:semver4j:6.0.0")
