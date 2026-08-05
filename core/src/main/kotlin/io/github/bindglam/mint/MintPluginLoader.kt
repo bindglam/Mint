@@ -8,7 +8,7 @@ import org.eclipse.aether.artifact.DefaultArtifact
 import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.repository.RemoteRepository
 
-@Suppress("unstableApiUsage")
+@Suppress("unstableApiUsage", "unused")
 class MintPluginLoader : PluginLoader {
     override fun classloader(classpathBuilder: PluginClasspathBuilder) {
         classpathBuilder.addLibrary(mavenCentral())
