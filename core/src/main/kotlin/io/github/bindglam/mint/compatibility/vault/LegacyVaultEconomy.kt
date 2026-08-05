@@ -19,22 +19,22 @@ object LegacyVaultEconomy : Economy {
     override fun currencyNamePlural(): String = Mint.instance().currencyManager().defaultCurrency().display().pluralName
     override fun currencyNameSingular(): String = Mint.instance().currencyManager().defaultCurrency().display().singularName()
 
-    override fun hasAccount(playerName: String): Boolean = true
-    override fun hasAccount(player: OfflinePlayer): Boolean = true
-    override fun hasAccount(playerName: String, worldName: String): Boolean = true
-    override fun hasAccount(player: OfflinePlayer, worldName: String): Boolean = true
+    override fun hasAccount(playerName: String) = true
+    override fun hasAccount(player: OfflinePlayer) = true
+    override fun hasAccount(playerName: String, worldName: String) = true
+    override fun hasAccount(player: OfflinePlayer, worldName: String) = true
 
-    override fun getBalance(playerName: String): Double = getBalance(Bukkit.getOfflinePlayer(playerName))
-    override fun getBalance(player: OfflinePlayer): Double = AccountManagerImpl.getAccount(player.uniqueId).balance.get().toDouble()
-    override fun getBalance(playerName: String, world: String): Double = getBalance(playerName)
-    override fun getBalance(player: OfflinePlayer, world: String): Double = getBalance(player)
+    override fun getBalance(playerName: String) = getBalance(Bukkit.getOfflinePlayer(playerName))
+    override fun getBalance(player: OfflinePlayer) = AccountManagerImpl.getAccount(player.uniqueId).balance.get().toDouble()
+    override fun getBalance(playerName: String, world: String) = getBalance(playerName)
+    override fun getBalance(player: OfflinePlayer, world: String) = getBalance(player)
 
-    override fun has(playerName: String, amount: Double): Boolean = getBalance(playerName) >= amount
-    override fun has(player: OfflinePlayer, amount: Double): Boolean = getBalance(player) >= amount
-    override fun has(playerName: String, worldName: String, amount: Double): Boolean = getBalance(playerName, worldName) >= amount
-    override fun has(player: OfflinePlayer, worldName: String, amount: Double): Boolean = getBalance(player, worldName) >= amount
+    override fun has(playerName: String, amount: Double) = getBalance(playerName) >= amount
+    override fun has(player: OfflinePlayer, amount: Double) = getBalance(player) >= amount
+    override fun has(playerName: String, worldName: String, amount: Double) = getBalance(playerName, worldName) >= amount
+    override fun has(player: OfflinePlayer, worldName: String, amount: Double) = getBalance(player, worldName) >= amount
 
-    override fun withdrawPlayer(playerName: String, amount: Double): EconomyResponse = withdrawPlayer(Bukkit.getOfflinePlayer(playerName), amount)
+    override fun withdrawPlayer(playerName: String, amount: Double) = withdrawPlayer(Bukkit.getOfflinePlayer(playerName), amount)
     override fun withdrawPlayer(player: OfflinePlayer, amount: Double): EconomyResponse {
         val account = AccountManagerImpl.getAccount(player.uniqueId)
         val result = account.modifyBalance(Operation.WITHDRAW, BigDecimal.valueOf(amount)).get()
@@ -43,8 +43,8 @@ object LegacyVaultEconomy : Economy {
         else
             EconomyResponse(amount, result.result().toDouble(), EconomyResponse.ResponseType.FAILURE, null)
     }
-    override fun withdrawPlayer(playerName: String, worldName: String, amount: Double): EconomyResponse = withdrawPlayer(playerName, amount)
-    override fun withdrawPlayer(player: OfflinePlayer, worldName: String, amount: Double): EconomyResponse = withdrawPlayer(player, amount)
+    override fun withdrawPlayer(playerName: String, worldName: String, amount: Double) = withdrawPlayer(playerName, amount)
+    override fun withdrawPlayer(player: OfflinePlayer, worldName: String, amount: Double) = withdrawPlayer(player, amount)
 
     override fun depositPlayer(playerName: String, amount: Double): EconomyResponse = depositPlayer(Bukkit.getOfflinePlayer(playerName), amount)
     override fun depositPlayer(player: OfflinePlayer, amount: Double): EconomyResponse {
@@ -55,8 +55,8 @@ object LegacyVaultEconomy : Economy {
         else
             EconomyResponse(amount, result.result().toDouble(), EconomyResponse.ResponseType.FAILURE, null)
     }
-    override fun depositPlayer(playerName: String, worldName: String, amount: Double): EconomyResponse = depositPlayer(playerName, amount)
-    override fun depositPlayer(player: OfflinePlayer, worldName: String, amount: Double): EconomyResponse = depositPlayer(player, amount)
+    override fun depositPlayer(playerName: String, worldName: String, amount: Double) = depositPlayer(playerName, amount)
+    override fun depositPlayer(player: OfflinePlayer, worldName: String, amount: Double) = depositPlayer(player, amount)
 
     override fun createBank(name: String, player: String) = EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented")
     override fun createBank(name: String, player: OfflinePlayer) = EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented")
@@ -79,8 +79,8 @@ object LegacyVaultEconomy : Economy {
 
     override fun getBanks() = listOf<String>()
 
-    override fun createPlayerAccount(playerName: String): Boolean = true
-    override fun createPlayerAccount(player: OfflinePlayer): Boolean = true
-    override fun createPlayerAccount(playerName: String, worldName: String): Boolean = createPlayerAccount(playerName)
-    override fun createPlayerAccount(player: OfflinePlayer, worldName: String): Boolean = createPlayerAccount(player)
+    override fun createPlayerAccount(playerName: String) = true
+    override fun createPlayerAccount(player: OfflinePlayer) = true
+    override fun createPlayerAccount(playerName: String, worldName: String) = createPlayerAccount(playerName)
+    override fun createPlayerAccount(player: OfflinePlayer, worldName: String) = createPlayerAccount(player)
 }
