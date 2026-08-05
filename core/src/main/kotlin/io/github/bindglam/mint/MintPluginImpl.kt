@@ -41,21 +41,21 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
         Mint.registerInstance(this)
 
-        this.metrics = Metrics(this, BSTATS_PLUGIN_ID)
-
         this.managers.sortedByDescending { it.priority().start }.forEach { it.preload(Context(this)) }
-        server.asyncScheduler.runNow(this) { _ ->
+        this.server.asyncScheduler.runNow(this) { _ ->
             this.managers.sortedByDescending { it.priority().start }.forEach { it.start(Context(this)) }
         }
+
+        this.metrics = Metrics(this, BSTATS_PLUGIN_ID)
 
         fun checkUpdate() {
             val checker = UpdateChecker("bindglam", PLUGIN_NAME)
 
             if(checker.check(this.pluginMeta.version)) {
-                logger.info("A new version of Mint is available!")
-                logger.info("https://github.com/bindglam/Mint/releases")
+                this.logger.info("A new version of Mint is available!")
+                this.logger.info("https://github.com/bindglam/Mint/releases")
             } else {
-                logger.info("You are using the latest version of Mint!")
+                this.logger.info("You are using the latest version of Mint!")
             }
         }
         this.server.asyncScheduler.runNow(this) { _ -> checkUpdate() }
@@ -70,9 +70,8 @@ class MintPluginImpl : JavaPlugin(), MintPlugin {
 
         this.mintConfig.load()
 
-        this.managers.sortedByDescending { it.priority().start }.filterIsInstance<Reloadable>().forEach { it.reload(
-            Context(this)
-        ) }
+        this.managers.sortedByDescending { it.priority().start }.filterIsInstance<Reloadable>()
+            .forEach { it.reload(Context(this)) }
 
         this.logger.info("Successfully reloaded!")
     }
