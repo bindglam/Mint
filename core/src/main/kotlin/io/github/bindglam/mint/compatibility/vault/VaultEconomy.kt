@@ -11,7 +11,7 @@ import java.math.BigDecimal
 import java.util.Optional
 import java.util.UUID
 
-object VaultEconomy : Economy { // TODO : refactoring
+object VaultEconomy : Economy {
     override fun isEnabled(): Boolean = true
     override fun getName(): String = Mint.instance().plugin().name
     override fun hasSharedAccountSupport(): Boolean  = false
@@ -26,10 +26,10 @@ object VaultEconomy : Economy { // TODO : refactoring
     override fun defaultCurrencyNamePlural(pluginName: String): String = Mint.instance().currencyManager().defaultCurrency().display().pluralName()
     override fun defaultCurrencyNameSingular(pluginName: String): String = Mint.instance().currencyManager().defaultCurrency().display().singularName()
     override fun currencies(): Collection<String> = Mint.instance().currencyManager().registry().entries().map { it.id() }
-    override fun createAccount(uuid: UUID, name: String): Boolean = true
-    override fun createAccount(accountID: UUID, name: String, player: Boolean): Boolean = true
-    override fun createAccount(uuid: UUID, name: String, worldName: String): Boolean = true
-    override fun createAccount(accountID: UUID, name: String, worldName: String, player: Boolean): Boolean = true
+    override fun createAccount(uuid: UUID, name: String): Boolean = false
+    override fun createAccount(accountID: UUID, name: String, player: Boolean): Boolean = false
+    override fun createAccount(uuid: UUID, name: String, worldName: String): Boolean = false
+    override fun createAccount(accountID: UUID, name: String, worldName: String, player: Boolean): Boolean = false
     override fun getUUIDNameMap(): Map<UUID, String> = mapOf()
     override fun getAccountName(uuid: UUID): Optional<String> = Optional.empty()
     override fun hasAccount(uuid: UUID): Boolean = true
@@ -37,7 +37,7 @@ object VaultEconomy : Economy { // TODO : refactoring
     override fun renameAccount(uuid: UUID, name: String): Boolean = false
     override fun renameAccount(pluginName: String, accountID: UUID, name: String): Boolean = false
     override fun deleteAccount(pluginName: String, accountID: UUID): Boolean = false
-    override fun accountSupportsCurrency(pluginName: String, accountID: UUID, currency: String): Boolean = Mint.instance().currencyManager().registry().get(currency).isPresent
+    override fun accountSupportsCurrency(pluginName: String, accountID: UUID, currency: String): Boolean = hasCurrency(currency)
     override fun accountSupportsCurrency(pluginName: String, accountID: UUID, currency: String, world: String): Boolean = accountSupportsCurrency(pluginName, accountID, currency)
     override fun getBalance(pluginName: String, uuid: UUID): BigDecimal = AccountManagerImpl.getAccount(uuid).balance.get()
     override fun getBalance(pluginName: String, uuid: UUID, world: String): BigDecimal = getBalance(pluginName, uuid)
