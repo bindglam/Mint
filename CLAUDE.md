@@ -104,7 +104,7 @@ Database type is configurable between SQLite (file-based) and MySQL (connection 
 ## Integration Layer
 
 ### Vault Compatibility
-`VaultEconomy` and `LegacyVaultEconomy` implement Vault's Economy interface, routing calls through Mint's Account/Currency systems.
+`VaultEconomy` and `VaultEconomy` implement Vault's Economy interface, routing calls through Mint's Account/Currency systems.
 
 ### PlaceholderAPI
 `MintExpansion` provides placeholders via the PAPI expansion system.
